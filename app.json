@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "Kikuyu-Bible_Ibuku-Ria-Ngai",
+    "slug": "Kikuyu-Bible_Ibuku-Ria-Ngai",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.peterndungu.KikuyuBible_IbukuRiaNgai"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "705d8387-1974-4b2a-946b-5c0b1f81504e"
+      }
+    }
+  }
+}

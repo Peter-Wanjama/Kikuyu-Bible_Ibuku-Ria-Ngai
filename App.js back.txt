@@ -1,0 +1,230 @@
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View, SafeAreaView, Image, TouchableOpacity } from 'react-native';
+import * as Font from 'expo-font';
+import { useContext, useEffect, useState } from 'react';
+import AppLoading from 'expo-app-loading';
+import { BibleContext, BibleProvider } from './contexts/BibleContext';
+import BookSelection from './components/BookSelection';
+
+const getFonts = () => Font.loadAsync({
+  'BoldFont': require('./assets/fonts/Barlow-Bold.ttf'),
+  'RegularFont': require('./assets/fonts/Barlow-Regular.ttf')
+})
+
+export default function App() {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+  const [testament,setTestament]=useState("NT");
+
+  useEffect(() => {
+    console.log("App Loaded:")
+  });
+  if (!fontsLoaded) {
+    return (
+      <AppLoading
+        startAsync={getFonts}
+        onFinish={() => {
+          setFontsLoaded(true);
+        }
+        }
+        onError={console.warn}
+      />
+    );
+  } else {
+    return (
+      <BibleProvider>
+        <SafeAreaView style={styles.wrapper}>
+          {/* Container */}
+          <View style={styles.container}>
+            <View style={styles.appBody}>
+              <View style={styles.appHeader}>
+                <Text style={styles.appName}>Kikuyu Bible</Text>
+                <TouchableOpacity>
+                  <Image style={styles.searchIcon} source={require('./assets/Search.png')} />
+                </TouchableOpacity>
+              </View>
+              <Image style={styles.logo} source={require('./assets/logo.png')} />
+              <View style={styles.dailyVerseBody}>
+                <Text style={styles.dailyVerseHeader}>Daily Verse</Text>
+                <Text style={styles.dailyVerseText}>Naarĩ korwo ũhonokio wa Isiraeli no ũgĩũke kuuma Zayuni! Rĩrĩa Jehova agaacookeria andũ ake indo ciao-rĩ, Jakubu nĩagĩkene, na Isiraeli acanjamũke.</Text>
+                <View style={styles.dailyVerseFooter}>
+                  <Text style={styles.dailyVerseRef}>Thaburi 14:7</Text>
+                  <View style={styles.footerTools}>
+                    <TouchableOpacity>
+                      <Image style={styles.footerToolsIcons} source={require('./assets/Copy.png')} />
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                      <Image style={styles.footerToolsIcons} source={require('./assets/Share.png')} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+
+              <View style={styles.bibleSection}>
+                <TouchableOpacity>
+                  <Text style={styles.startReading}>Start Reading</Text>
+                </TouchableOpacity>
+                <View style={styles.testamentsSection}>
+                  <TouchableOpacity onPress={setTestament("OT")}>
+                    <Text style={styles.testaments}>Kirikaniro Gikũrũ</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={setTestament("NT")}>
+                    <Text style={styles.testaments}>Kirikaniro Kĩerũ</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <BookSelection testament={testament}/>
+
+
+            </View>
+            <View style={styles.navigation}>
+              <TouchableOpacity style={styles.navItem}>
+                <Image style={styles.navIcon} source={require('./assets/Home.png')} />
+                <Text style={styles.navText}>Home</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.navItem}>
+                <Image style={styles.navIcon} source={require('./assets/Note.png')} />
+                <Text style={styles.navText}>Notes</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.navItem}>
+                <Image style={styles.navIcon} source={require('./assets/Copy1.png')} />
+                <Text style={styles.navText}>Saved</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.navItem}>
+                <Image style={styles.navIcon} source={require('./assets/Settings.png')} />
+                <Text style={styles.navText}>Settings</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+        </SafeAreaView>
+      </BibleProvider>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: '#fff',
+    height: '100%',
+    width: '100%',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+  appBody: {
+    flex: 11,
+  },
+  appHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 15,
+  },
+  appName: {
+    fontFamily: 'BoldFont',
+    paddingRight: 10,
+  },
+  logo: {
+    alignSelf: 'center',
+    marginTop: 20,
+  },
+  dailyVerseBody: {
+    borderRadius: 5,
+    borderColor: '#eee',
+    borderWidth: 1,
+    margin: 10,
+    marginTop: 40,
+    flexDirection: 'column',
+  },
+  dailyVerseHeader: {
+    borderColor: '#eee',
+    borderWidth: 1,
+    padding: 15,
+    fontFamily: 'BoldFont',
+    textAlign: 'center',
+    fontSize: 18,
+  },
+  dailyVerseRef: {
+    fontFamily: 'BoldFont',
+  },
+  dailyVerseText: {
+    padding: 10,
+    fontFamily: 'RegularFont',
+    fontSize: 14,
+  },
+  dailyVerseFooter: {
+    borderColor: '#eee',
+    borderWidth: 1,
+    paddingLeft: 5,
+    fontFamily: 'RegularFont',
+    fontSize: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  footerTools: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingTop: 5,
+    justifyContent: 'space-around'
+  },
+  footerToolsIcons: {
+    margin: 10,
+  },
+  bibleSection: {
+    borderRadius: 5,
+    borderColor: '#eee',
+    borderWidth: 1,
+    margin: 10,
+    flexDirection: 'column',
+    flexWrap: 'wrap',
+  },
+  startReading: {
+    fontFamily: 'BoldFont',
+    textAlign: 'center',
+    fontSize: 15,
+    padding: 15,
+  },
+  testamentsSection: {
+    borderRadius: 5,
+    borderColor: '#eee',
+    borderWidth: 1,
+    paddingTop: 10,
+    paddingBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+  },
+  testaments: {
+    backgroundColor: '#BB5C04',
+    borderRadius: 5,
+    borderColor: '#eee',
+    borderWidth: 1,
+    color: '#fff',
+    padding: 16,
+    letterSpacing: 1,
+    fontFamily: 'RegularFont',
+    fontSize: 16,
+  },
+  navigation: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    //backgroundColor:'#f6d',
+  },
+  navItem: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  navText: {
+    textAlign: 'center',
+    fontFamily: 'RegularFont',
+    color: '#212121',
+    fontSize: 10,
+  },
+  navIcon: {
+  }
+});
