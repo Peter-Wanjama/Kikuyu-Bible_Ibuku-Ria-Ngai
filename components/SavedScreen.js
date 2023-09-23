@@ -1,11 +1,12 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { FlatList, RefreshControl, StyleSheet, Text, ToastAndroid, View } from "react-native";
+import { FlatList, RefreshControl, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from "react-native";
 import kikuyubibledb from '../assets/kikuyubibledb';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function SavedScreen() {
     ToastAndroid.show('Loading...', ToastAndroid.SHORT);
     const TopTab = createMaterialTopTabNavigator();
-    const BibleBooks=Object.keys(kikuyubibledb);
+    const BibleBooks = Object.keys(kikuyubibledb);
     function Bk() {
         return (
             <View>
@@ -13,18 +14,51 @@ export default function SavedScreen() {
             </View>)
     }
     function Fav() {
-        
+        var myR = async () => {
+            console.log("Fetching data...")
+            await AsyncStorage.getAllKeys((err, keys) => {
+                AsyncStorage.multiGet(keys, (err, stores) => {
+                    stores.map((result, i, store) => {
+                        let key = store[i][0];
+                        let value = store[i][1];
+                        // console.log("Key-" + key)
+                        // console.log("Value-" + value)
+                        const arr = [];
+                        if (key.startsWith('favorites')) {
+                            v = JSON.parse(value)
+                            arr.push(v);
+                        }
+                    }); arr = arr[0];
+                    console.log(arr.length + ' items\nitems:' + arr)
+                });
+            });
+            return arr;
+        }
+        //fetchAllItems();
         const favorites = [{ id: 1, book: 1, chapter: 2, verse: 4 }, { id: 2, book: 39, chapter: 17, verse: 21 }, { id: 3, book: 38, chapter: 3, verse: 10 }, { id: 4, book: 10, chapter: 2, verse: 4 }];
-        const Verse = ({ item}) => (
+        console.log("favorites:" + favorites)
+        const Verse = ({ item }) => (
             <View style={styles.item}>
-                <Text style={styles.verseText}>{kikuyubibledb[BibleBooks[item.book]][0][item.chapter][item.verse-1].t}</Text>
+                <Text style={styles.verseText}>{kikuyubibledb[BibleBooks[item.book]][0][item.chapter][item.verse - 1].t}</Text>
                 <Text style={styles.verseRef}>{BibleBooks[item.book]} {item.chapter}:{item.verse}</Text>
             </View>
         );
+        // const saveToFavorites = async () => {
+        //     console.log('Storing...')
+        //     await AsyncStorage.setItem('favorites', JSON.stringify(favorites), (err) => {
+        //         if (err) {
+        //             console.log("an error");
+        //             throw err;
+        //         }
+        //         console.log("success saving");
+        //     }).catch((err) => {
+        //         console.log("saving error is: " + err);
+        //     });
+        // };
         return (
             <View>
                 <FlatList
-                    data={favorites}
+                    data={myR}
                     renderItem={({ item }) => <Verse item={item} book={item.book} chapter={item.chapter} />}
                     keyExtractor={item => item.id}
                 />
@@ -53,21 +87,21 @@ const styles = StyleSheet.create({
     },
     item: {
         // backgroundColor: '#f9c2ff'
-        borderRadius:1,
-        borderWidth:0.4,
-        borderColor:'#d2d2d2',
+        borderRadius: 1,
+        borderWidth: 0.4,
+        borderColor: '#d2d2d2',
         marginVertical: 8,
         marginHorizontal: 8,
-        padding:5,
+        padding: 5,
     },
-    verseText:{
-        fontSize:17,
-        fontFamily:'RegularFont',
-        maxHeight:40,
+    verseText: {
+        fontSize: 17,
+        fontFamily: 'RegularFont',
+        maxHeight: 40,
     },
-    verseRef:{
+    verseRef: {
         marginTop: 3,
-        fontSize:16,
-        fontFamily:'RegularFont'
+        fontSize: 16,
+        fontFamily: 'RegularFont'
     }
 });

@@ -117,7 +117,7 @@ function Notes({ navigation }) {
                     // console.log("Key-" + key)
                     // console.log("Value-" + value)
                     v = JSON.parse(value)
-                    if(key!=='favorites')
+                    if(!key.startsWith('favorites'))
                     myR.push(v);
                 });
             });
