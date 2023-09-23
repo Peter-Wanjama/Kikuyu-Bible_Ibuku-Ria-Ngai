@@ -15,7 +15,8 @@ export default function SavedScreen() {
             </View>)
     }
     function Fav() {
-        /* const favorites = [{ id: 1, book: 1, chapter: 2, verse: 4 }, { id: 2, book: 39, chapter: 17, verse: 21 }, { id: 3, book: 38, chapter: 3, verse: 10 }, { id: 4, book: 10, chapter: 2, verse: 4 }];
+        const favorites = [{ id: 1, book: 1, chapter: 2, verse: 4 }, { id: 2, book: 39, chapter: 17, verse: 21 }, { id: 3, book: 38, chapter: 3, verse: 10 }, { id: 4, book: 10, chapter: 2, verse: 4 }];
+        /*
           */
          //
         const [myR, setMyR] = useState([]);
@@ -64,6 +65,7 @@ export default function SavedScreen() {
         // };
         return (
             <View>
+                {/* <TouchableOpacity onPress={saveToFavorites}><Text>Add to Favorites</Text></TouchableOpacity> */}
                 <FlatList
                     data={myR}
                     renderItem={({ item }) => <Verse item={item} book={item.book} chapter={item.chapter} />}
@@ -75,7 +77,7 @@ export default function SavedScreen() {
         <View style={styles.container}>
             <TopTab.Navigator style={styles.nav} screenOptions={{
                 tabBarIndicatorStyle: { backgroundColor: '#BB5C04' },
-                tabBarItemStyle: { width: 100, },
+                tabBarItemStyle: { width: 120, },
             }}>
                 <TopTab.Screen name='favorites' component={Fav} />
                 <TopTab.Screen name='bookmarks' component={Bk} />
@@ -104,7 +106,7 @@ const styles = StyleSheet.create({
     verseText: {
         fontSize: 17,
         fontFamily: 'OldRegularFont',
-        maxHeight: 35,
+        maxHeight: 40,
     },
     verseRef: {
         marginTop: 3,
