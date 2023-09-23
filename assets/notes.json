@@ -1,0 +1,50 @@
+    [
+        {
+            "id": 1,
+            "heading": "This Grace Called Favor",
+            "content": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque unde nisi sint inventore corrupti repellendus minima accusamus ratione tempore omnis quaerat qui, officia doloribus veniam soluta! Quia qui quasi nesciunt.",
+            "speaker": "Apostle Joshua Selman",
+            "location": "Rhema Feast Nairobi",
+            "date": "12/09/2023 12:00 PM"
+        },
+        {
+            "id": 2,
+            "heading": "This Anointing",
+            "content": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque unde nisi sint inventore corrupti repellendus minima accusamus ratione tempore omnis quaerat qui, officia doloribus veniam soluta! Quia qui quasi nesciunt.",
+            "speaker": "Apostle Johnson Suleman",
+            "location": "Kitui",
+            "date": "12/09/2023 12:00 PM"
+        },
+        {
+            "id": 3,
+            "heading": "Prayer is the key",
+            "content": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque unde nisi sint inventore corrupti repellendus minima accusamus ratione tempore omnis quaerat qui, officia doloribus veniam soluta! Quia qui quasi nesciunt.",
+            "speaker": "Pastor Pius Muiru",
+            "location": "Nakuru",
+            "date": "12/09/2023 12:00 PM"
+        },
+        {
+            "id": 4,
+            "heading": "This Grace Called Favor",
+            "content": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque unde nisi sint inventore corrupti repellendus minima accusamus ratione tempore omnis quaerat qui, officia doloribus veniam soluta! Quia qui quasi nesciunt.",
+            "speaker": "Apostle Joshua Selman",
+            "location": "Rhema Feast Nairobi",
+            "date": "12/09/2023 12:00 PM"
+        },
+        {
+            "id": 5,
+            "heading": "This Anointing",
+            "content": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque unde nisi sint inventore corrupti repellendus minima accusamus ratione tempore omnis quaerat qui, officia doloribus veniam soluta! Quia qui quasi nesciunt.",
+            "speaker": "Apostle Johnson Suleman",
+            "location": "Mombasa",
+            "date": "12/09/2023 12:00 PM"
+        },
+        {
+            "id": 6,
+            "heading": "Prayer is the key",
+            "content": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque unde nisi sint inventore corrupti repellendus minima accusamus ratione tempore omnis quaerat qui, officia doloribus veniam soluta! Quia qui quasi nesciunt.",
+            "speaker": "Pastor Pius Muiru",
+            "location": "Nairobi",
+            "date": "12/09/2023 12:00 PM"
+        }
+    ]

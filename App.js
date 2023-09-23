@@ -1,4 +1,4 @@
-import { StyleSheet, View, SafeAreaView } from 'react-native';
+import { StyleSheet, View, SafeAreaView, TouchableOpacity } from 'react-native';
 import { useEffect } from 'react';
 import { BibleProvider } from './contexts/BibleContext';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -30,7 +30,7 @@ export default function App() {
                       iconName = focused ? 'ios-home' : 'ios-home-outline';
                     } else if (route.name === 'Notes') {
                       return <FontAwesome name={iconName = focused ? "sticky-note":"sticky-note-o"} size={size} color={colour} />
-                    } else if (route.name === 'Favorites') {
+                    } else if (route.name === 'Saved') {
                       iconName = focused ? 'heart' : 'heart-outline';
                     } else if (route.name === 'Settings') {
                       iconName = focused ? 'settings' : 'settings-outline';
@@ -39,8 +39,8 @@ export default function App() {
                   },
                 })}>
                 <Tab.Screen name="Home" options={{headerShown:false}} component={Home} />
-                <Tab.Screen name="Notes" component={NotesScreen} />
-                <Tab.Screen name="Favorites" component={SavedScreen} />
+                <Tab.Screen options={{headerShown:false}} name="Notes" component={NotesScreen} />
+                <Tab.Screen name="Saved" component={SavedScreen} />
                 <Tab.Screen name="Settings" component={SettingsScreen} />
               </Tab.Navigator>
             </NavigationContainer>

@@ -1,6 +1,6 @@
 import AppLoading from "expo-app-loading";
 import { useContext, useRef, useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, ToastAndroid } from "react-native";
 import { useFonts } from 'expo-font';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import BookSelection from "./BookSelection";
@@ -39,7 +39,7 @@ export default function HomeScreen({navigation}) {
         /* let v = bibleselected.bookSet + " " + bibleselected.chapterSet + "." + bibleselected.verseSet + "\n" +
             kikuyubibledb[bibleselected.bookSet][0][bibleselected.chapterSet][bibleselected.verseSet - 1].t;
         setData([v]); */
-        resetBible();
+        resetBible();ToastAndroid.show('Please wait...',ToastAndroid.LONG);
         navigation.navigate('ScriptureReading');
     }
     const handleVerse = (value) => {
@@ -48,7 +48,7 @@ export default function HomeScreen({navigation}) {
         setData((Object.keys(kikuyubibledb[bibleselected.bookSet][0][bibleselected.chapterSet])).map(function (x) {
             return parseInt(x) + 1;
         }));
-        console.log(data.length);
+        // console.log(data.length);
     }
     const handleChapter = (value) => {
         console.log(bibleselected.bookSet);
@@ -56,7 +56,7 @@ export default function HomeScreen({navigation}) {
         setData((Object.keys(kikuyubibledb[bibleselected.bookSet][0])).map(function (x) {
             return parseInt(x);
         }));
-        console.log(data.length);
+        // console.log(data.length);
     }
     const handleBible = (value) => {
         setTestament(value);
@@ -65,7 +65,7 @@ export default function HomeScreen({navigation}) {
                 console.log("OT");
                 setPrepared('Kirikaniro Gikũrũ');
                 setData(Object.keys(kikuyubibledb).slice(0, 39));
-                console.log(data.length);
+                // console.log(data.length);
                 bibleSheet.current?.show();
                 break;
 
@@ -73,7 +73,7 @@ export default function HomeScreen({navigation}) {
                 console.log("NT");
                 setPrepared('Kirikaniro Kĩerũ');
                 setData(Object.keys(kikuyubibledb).slice(-27));
-                console.log(data.length);
+                // console.log(data.length);
                 bibleSheet.current?.show();
                 break;
 
@@ -88,17 +88,17 @@ export default function HomeScreen({navigation}) {
         return (
             <View style={styles.container}>
                 <View style={styles.appBody}>
-                    <View style={styles.appHeader}>
+                    {/* <View style={styles.appHeader}>
                         <Text style={styles.appName}>Kikuyu Bible</Text>
                         <TouchableOpacity>
                             <Ionic name="search-sharp" color={"#222"} size={20} />
                         </TouchableOpacity>
-                    </View>
+                    </View> */}
                     <Image style={styles.logo} source={require('.././assets/logo.png')} />
                     <View style={styles.dailyVerseBody}>
                         <Text style={styles.dailyVerseHeader}>Daily Verse</Text>
-                        <Text style={styles.dailyVerseText}>Naarĩ korwo ũhonokio wa Isiraeli no ũgĩũke kuuma Zayuni! Rĩrĩa Jehova agaacookeria andũ ake indo ciao-rĩ, Jakubu nĩagĩkene, na Isiraeli acanjamũke.</Text>
-                        <View style={styles.dailyVerseFooter}>
+                        <TouchableOpacity onPress={()=>{ToastAndroid.show('Please wait...',ToastAndroid.LONG); setBible({book:'Thaburi',chapter:14,verse:7}); navigation.navigate('ScriptureReading');}}><Text style={styles.dailyVerseText}>Naarĩ korwo ũhonokio wa Isiraeli no ũgĩũke kuuma Zayuni! Rĩrĩa Jehova agaacookeria andũ ake indo ciao-rĩ, Jakubu nĩagĩkene, na Isiraeli acanjamũke.</Text>
+                        </TouchableOpacity><View style={styles.dailyVerseFooter}>
                             <Text style={styles.dailyVerseRef}>Thaburi 14:7</Text>
                             <View style={styles.footerTools}>
                                 <TouchableOpacity style={{ paddingRight: 15 }}>
@@ -274,7 +274,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'space-between',
-        paddingTop: 10,
     },
     appBody: {
         flex: 1,
@@ -282,7 +281,8 @@ const styles = StyleSheet.create({
     appHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        padding: 15,
+        paddingRight: 15,
+        paddingLeft: 15,
     },
     appName: {
         fontFamily: 'BoldFont',
@@ -290,20 +290,20 @@ const styles = StyleSheet.create({
     },
     logo: {
         alignSelf: 'center',
-        marginTop: 20,
+        marginTop: 15,
     },
     dailyVerseBody: {
         borderRadius: 5,
         borderColor: '#eee',
         borderWidth: 1,
         margin: 10,
-        marginTop: 40,
+        marginTop: 15,
         flexDirection: 'column',
     },
     dailyVerseHeader: {
         borderColor: '#eee',
         borderWidth: 1,
-        padding: 15,
+        padding: 5,
         fontFamily: 'BoldFont',
         textAlign: 'center',
         fontSize: 22,
@@ -315,14 +315,13 @@ const styles = StyleSheet.create({
     dailyVerseText: {
         padding: 10,
         fontFamily: 'RegularFont',
-        fontSize: 18,
+        fontSize: 22,
     },
     dailyVerseFooter: {
         borderColor: '#eee',
         borderWidth: 1,
         paddingLeft: 5,
         fontFamily: 'RegularFont',
-
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -348,7 +347,7 @@ const styles = StyleSheet.create({
         fontFamily: 'BoldFont',
         textAlign: 'center',
         fontSize: 15,
-        padding: 15,
+        padding: 5,
     },
     testamentsSection: {
         borderRadius: 5,

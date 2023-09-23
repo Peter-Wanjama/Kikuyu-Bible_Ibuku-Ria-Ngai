@@ -1,14 +1,11 @@
-import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, RefreshControl, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import kikuyubibledb from "../../assets/kikuyubibledb";
-import { useContext, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useFonts } from 'expo-font';
 import { BibleContext } from "../../contexts/BibleContext";
 import AppLoading from "expo-app-loading";
 import Ionic from "react-native-vector-icons/Ionicons";
-import GestureRecognizer from "react-native-swipe-gestures";
 import Swiper from "react-native-swiper";
-import BookSelection from '../BookSelection';
-import SettingsScreen from '../SettingsScreen';
 
 
 const getFonts = {
@@ -17,41 +14,47 @@ const getFonts = {
     'MediumFont': require('../.././assets/fonts/Barlow-Medium.ttf'),
     'RegularFont': require('../.././assets/fonts/Barlow-Regular.ttf')
 };
-export default function ScriptureReading() {
-    const { book, chapter, verse,setBible } = useContext(BibleContext);
-    const DAT = kikuyubibledb[book][0][chapter];
-    const n = kikuyubibledb[book][0].length;
+export default function ScriptureReading({ navigation }) {
+    myRef = React.useRef(null);
+    const { book, chapter, verse, setBible } = useContext(BibleContext);
     const [fontsLoaded] = useFonts(getFonts);
-    const [selectedVerse, setSelectedVerse] = useState();
-    const i=chapter;
-    const Verse = ({ item,b ,c }) => (
-        <TouchableOpacity style={styles.item}>
+    const Verse = ({ item, b, c }) => (
+        <View style={styles.item}>
             <View style={styles.verseHeader}>
                 <Text style={styles.verseHeaderText}>{b} {c}:{item.v}</Text>
                 <TouchableOpacity style={styles.verseOptions}><Ionic name="ellipsis-horizontal" color={'#BB5C04'} size={20} /></TouchableOpacity>
             </View>
             <Text style={styles.title}>{item.t}</Text>
-        </TouchableOpacity>
+        </View>
     );
 
+    const [refreshing, setRefreshing] = useState(false);
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 1000);
+    }, []);
     if (!fontsLoaded) {
+
         return <AppLoading />
     } else {
         return (
             <SafeAreaView style={styles.container}>
-                {/* <GestureRecognizer config={{ velocityThreshold: 0.3, directionalOffsetThreshold: 80}}
-                onSwipeLeft={()=>{console.log('Next Chapter')}}
-                onSwipeRight={()=>{console.log('Previous Chapter')}}></GestureRecognizer> */}
-                <Swiper showPagination={false} showsButtons={false} loop={false} index={i-1}>
+                <Swiper showPagination={true} showsButtons={false} loop={false} index={chapter - 1} dot={<View></View>} activeDot={<View></View>} onIndexChanged={(i) => { navigation.setOptions({ title: book + ' ' + (i + 1), }); }} loadMinimal={true} loadMinimalSize={1}>
                     {
-                        Object.keys(kikuyubibledb[book][0]).map(function(element, key) {
-                            //setBible({book:book,chapter:element,verse:1});
-                            return ( 
-                                <FlatList key={key}
-                                    data={kikuyubibledb[book][0][element]} 
+                        Object.keys(kikuyubibledb[book][0]).map(function (element, key) {
+                            return (<View key={key}>
+                                <FlatList
+                                    ref={(ref) => myRef = ref}
+                                    key={key}
+                                    data={kikuyubibledb[book][0][element]}
+                                    initialScrollIndex={(chapter - 1) === key ? verse - 1 : 0}
                                     renderItem={({ item }) => <Verse item={item} b={book} c={element} />}
                                     keyExtractor={item => item.v}
-                                />)
+                                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+                                />
+                            </View>)
                         })
 
                     }
