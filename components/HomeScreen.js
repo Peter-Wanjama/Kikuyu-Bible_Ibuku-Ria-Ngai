@@ -2,45 +2,29 @@ import { useContext, useLayoutEffect, useRef, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, ToastAndroid } from "react-native";
 import Ionic from 'react-native-vector-icons/Ionicons';
 import ActionSheet from "react-native-actions-sheet";
-import favorites from "../assets/favorites";
+import dailyVerses from "../assets/dailyVerses";
 import kikuyubibledb from "../assets/kikuyubibledb";
 import { BibleContext } from "../contexts/BibleContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 export default function HomeScreen({navigation}) {
-    // const [favoriteVerse,setFavoriteVerse]=useState({book:'Johana',chapter:1,verse:1});
-    //const [favoriteVerse,setFavoriteVerse]=useState([]);
     const BibleBooks = Object.keys(kikuyubibledb);
-    // const fetchAllItems = async () => {
-    //     console.log("Fetching data...")
-    //     try {
-    //         await AsyncStorage.getAllKeys((err, keys) => {
-    //             AsyncStorage.multiGet(keys, (err, stores) => {
-    //                 stores.map((result, i, store) => {
-    //                     let key = store[i][0];
-    //                     let value = store[i][1];
-    //                     // console.log("Key-" + key)
-    //                     // console.log("Value-" + value)
-    //                     if (key.startsWith('favorites')) {
-    //                         v = JSON.parse(value)
-    //                         setFavoriteVerse(v[(Math.floor(Math.random() * Object.keys(v).length) + 1)]);
-    //                         // setFavoriteVerse(v[1]);
-    //                     }
-    //                 });
-    //                 //console.log(favoriteVerse.length + ' items:' +JSON.stringify(favoriteVerse));
-    //             });
-    //         });
-    //     } catch (error) {
-    //         console.log("ERROR FETCHING:" + error)
-    //     }
-    // }
-    
     //useLayoutEffect(()=>{fetchAllItems();},[])
-    //var text='verse displays here';
-    // text=kikuyubibledb[BibleBooks[favoriteVerse.book]][0][favoriteVerse.chapter][favoriteVerse.verse][0].t;
-    const favoriteVerse=favorites[Math.floor(Math.random()*favorites.length)];
-    console.log(favoriteVerse)
+    const dailyVerse=dailyVerses[Math.floor(Math.random()*dailyVerses.length)];
+    console.log(dailyVerse)
+    const saveToFavorites = async () => {
+        console.log('Storing...')
+        await AsyncStorage.setItem('favorites-'+(dailyVerse.book+dailyVerse.chapter+dailyVerse.verse).replace(/\s/g, ''), JSON.stringify(dailyVerse), (err) => {
+            if (err) {
+                console.log("an error");
+                throw err;
+            }
+            console.log("success saving");
+        }).catch((err) => {
+            console.log("saving error is: " + err);
+        });
+        };
     const {setBible}=useContext(BibleContext);
     const [data, setData] = useState([]);
     const [testament, setTestament] = useState('');
@@ -109,13 +93,13 @@ export default function HomeScreen({navigation}) {
                     <View style={styles.dailyVerseBody}>
                         <Text style={styles.dailyVerseHeader}>Daily Verse</Text>
                         <TouchableOpacity onPress={()=>{ToastAndroid.show('Please wait...',ToastAndroid.LONG); 
-                        setBible({book:favoriteVerse.book,chapter:favoriteVerse.chapter,verse:favoriteVerse.verse}); navigation.navigate('ScriptureReading');}}>
-                            <Text style={styles.dailyVerseText}>{}</Text>
+                        setBible({book:dailyVerse.book,chapter:dailyVerse.chapter,verse:dailyVerse.verse}); navigation.navigate('ScriptureReading');}}>
+                            <Text style={styles.dailyVerseText}>{kikuyubibledb[dailyVerse.book][0][dailyVerse.chapter][dailyVerse.verse-1].t}</Text>
                         </TouchableOpacity>
                         <View style={styles.dailyVerseFooter}>
-                            <Text style={styles.dailyVerseRef}>{favoriteVerse.book} {favoriteVerse.chapter}:{favoriteVerse.verse}</Text>
+                            <Text style={styles.dailyVerseRef}>{dailyVerse.book} {dailyVerse.chapter}:{dailyVerse.verse}</Text>
                             <View style={styles.footerTools}>
-                                <TouchableOpacity style={{ paddingRight: 15 }}>
+                                <TouchableOpacity onPress={saveToFavorites} style={{ paddingRight: 15 }}>
                                     <Ionic name="heart-outline" color={"#BB5C04"} size={30} />
                                 </TouchableOpacity>
                                 <TouchableOpacity>

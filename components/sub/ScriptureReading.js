@@ -7,12 +7,25 @@ import Swiper from "react-native-swiper";
 
 export default function ScriptureReading({ navigation }) {
     myRef = React.useRef(null);
+    ref2 = React.useRef(null);
     const { book, chapter, verse, setBible } = useContext(BibleContext);
+    const getMoreIcons=(item,b,c)=>{
+        console.log('more '+item.v)
+        //ref2.current?.
+        return(<View style={{flexDirection:'row',backgroundColor:'red'}}><Text>Hello</Text><Text>{b} {c}:{item.v}</Text></View>);
+    }
     const Verse = ({ item, b, c }) => (
         <View style={styles.item}>
             <View style={styles.verseHeader}>
                 <Text style={styles.verseHeaderText}>{b} {c}:{item.v}</Text>
-                <TouchableOpacity style={styles.verseOptions}><Ionic name="ellipsis-horizontal" color={'#BB5C04'} size={20} /></TouchableOpacity>
+                <View style={{flexDirection:'row',marginEnd:10}}>
+                    <View style={{flexDirection:'row'}}>
+                        <Ionic name="heart-outline" color={'#BB5C04'} size={20} />
+                        <Ionic name="heart-outline" color={'#BB5C04'} size={20} />
+                        <Ionic name="share-outline" color={'#BB5C04'} size={20} />
+                    </View>
+                <TouchableOpacity style={styles.verseOptions} ref={ref2}><Ionic name="ellipsis-horizontal" color={'#BB5C04'} size={20} /></TouchableOpacity>
+                </View>
             </View>
             <Text style={styles.title}>{item.t}</Text>
         </View>

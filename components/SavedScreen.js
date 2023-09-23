@@ -1,91 +1,102 @@
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { FlatList, RefreshControl, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from "react-native";
-import kikuyubibledb from '../assets/kikuyubibledb';
+import { FlatList, RefreshControl, SafeAreaView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from "react-native";
+import Ionic from "react-native-vector-icons/Ionicons";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useCallback, useLayoutEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useLayoutEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import kikuyubibledb from '../assets/kikuyubibledb';
 
-export default function SavedScreen() {
-    ToastAndroid.show('Loading...', ToastAndroid.SHORT);
-    const TopTab = createMaterialTopTabNavigator();
-    const BibleBooks = Object.keys(kikuyubibledb);
-    function Bk() {
-        return (
-            <View>
-                <Text>Bookmarks</Text>
-            </View>)
-    }
-    function Fav() {
-        const favorites = [{ id: 1, book: 1, chapter: 2, verse: 4 }, { id: 2, book: 39, chapter: 17, verse: 21 }, { id: 3, book: 38, chapter: 3, verse: 10 }, { id: 4, book: 10, chapter: 2, verse: 4 }];
-        /*
-          */
-         //
-        const [myR, setMyR] = useState([]);
-        const fetchAllItems = async () => {
-            console.log("Fetching data...")
-            try {
-                await AsyncStorage.getAllKeys((err, keys) => {
-                    AsyncStorage.multiGet(keys, (err, stores) => {
-                        stores.map((result, i, store) => {
-                            let key = store[i][0];
-                            let value = store[i][1];
-                            // console.log("Key-" + key)
-                            // console.log("Value-" + value)
-                            if (key.startsWith('favorites')) {
-                                v = JSON.parse(value)
-                                //arr.push(v);
-                                setMyR(v);
-                            }
-                        });
-                        //console.log(arr.length + ' items:' + arr);
-                    });
-                });
-            } catch (error) {
-                console.log("ERROR FETCHING:" + error)
-            }
-        }
-        useLayoutEffect(()=>{fetchAllItems()},[])
-        
-        const Verse = ({ item }) => (
-            <View style={styles.item}>
-                <Text style={styles.verseText}>{kikuyubibledb[BibleBooks[item.book]][0][item.chapter][item.verse - 1].t}</Text>
-                <Text style={styles.verseRef}>{BibleBooks[item.book]} {item.chapter}:{item.verse}</Text>
-            </View>
-        );
-        // const saveToFavorites = async () => {
-        //     console.log('Storing...')
-        //     await AsyncStorage.setItem('favorites', JSON.stringify(favorites), (err) => {
-        //         if (err) {
-        //             console.log("an error");
-        //             throw err;
-        //         }
-        //         console.log("success saving");
-        //     }).catch((err) => {
-        //         console.log("saving error is: " + err);
-        //     });
-        // };
-        return (
-            <View>
-                {/* <TouchableOpacity onPress={saveToFavorites}><Text>Add to Favorites</Text></TouchableOpacity> */}
-                <FlatList
-                    data={myR}
-                    renderItem={({ item }) => <Verse item={item} book={item.book} chapter={item.chapter} />}
-                    keyExtractor={item => item.id}
-                />
-            </View>)
-    }
+function Bookmarks() {
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { alignItems: 'left' }]}>
+            <Text>Bookmarks</Text>
+        </View>
+    );
+}
+function Favorites() {
+    const [arr, setArr] = useState([]);
+    var myR = [];
+    const BibleBooks = Object.keys(kikuyubibledb);
+    const fetchAllItems = async () => {
+        console.log("Fetching data...")
+        await AsyncStorage.getAllKeys((err, keys) => {
+            AsyncStorage.multiGet(keys, (err, stores) => {
+                console.log(stores.length + ' items')
+                stores.map((result, i, store) => {
+                    // get at each store's key/value so you can work with it
+                    let key = store[i][0];
+                    let value = store[i][1];
+                    // console.log("Key-" + key)
+                    // console.log("Value-" + value)
+                    v = JSON.parse(value)
+                    if (key.startsWith('favorites'))
+                        myR.push(v);
+                });
+            });
+        });
+    }
+    const deleteNote = async ({ item }) => {
+        console.log("Deleting..." + item.id + " " + item.content)
+        await AsyncStorage.removeItem(item.id)
+        onRefresh()
+    }
+    const Verse = ({ item }) => (
+        <View style={styles.item}>
+            <Text style={styles.verseText}>{kikuyubibledb[item.book][0][item.chapter][item.verse - 1].t}</Text>
+            <Text style={styles.verseRef}>{item.book} {item.chapter}:{item.verse}</Text>
+        </View>
+    );
+    
+    const [refreshing, setRefreshing] = useState(false);
+    useFocusEffect(() => {
+        console.log("note view")
+    })
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+            myR = []
+            fetchAllItems()
+            setArr(myR)
+            setRefreshing(false);
+        }, 1000);
+    }, []);
+    useLayoutEffect(() => {
+        fetchAllItems();
+        setArr(myR)
+    }, []);
+    return (
+        <View>
+            <FlatList
+                data={arr}
+                renderItem={({ item }) => <Verse item={item} />}
+                keyExtractor={item => item.id}
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+            />
+        </View>
+    );
+}
+export default function NotesScreen() {
+    const TopTab = createMaterialTopTabNavigator();
+    return (
+        <SafeAreaView style={styles.wrapper}>
             <TopTab.Navigator style={styles.nav} screenOptions={{
                 tabBarIndicatorStyle: { backgroundColor: '#BB5C04' },
                 tabBarItemStyle: { width: 120, },
             }}>
-                <TopTab.Screen name='favorites' component={Fav} />
-                <TopTab.Screen name='bookmarks' component={Bk} />
+                <TopTab.Screen name='favorites' component={Favorites} />
+                <TopTab.Screen name='bookmarks' component={Bookmarks} />
             </TopTab.Navigator>
-        </View>
+        </SafeAreaView>
     );
 }
+
 const styles = StyleSheet.create({
+    wrapper: {
+        flex: 1,
+    },
     container: {
         flex: 1,
         justifyContent: 'flex-end',
@@ -106,7 +117,7 @@ const styles = StyleSheet.create({
     verseText: {
         fontSize: 17,
         fontFamily: 'OldRegularFont',
-        maxHeight: 40,
+        maxHeight: 36,
     },
     verseRef: {
         marginTop: 3,
