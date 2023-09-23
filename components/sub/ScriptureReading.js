@@ -1,9 +1,10 @@
-import { FlatList, RefreshControl, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Clipboard, FlatList, RefreshControl, SafeAreaView, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from "react-native";
 import kikuyubibledb from "../../assets/kikuyubibledb";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { BibleContext } from "../../contexts/BibleContext";
 import Ionic from "react-native-vector-icons/Ionicons";
 import Swiper from "react-native-swiper";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ScriptureReading({ navigation }) {
     myRef = React.useRef(null);
@@ -14,17 +15,33 @@ export default function ScriptureReading({ navigation }) {
         //ref2.current?.
         return(<View style={{flexDirection:'row',backgroundColor:'red'}}><Text>Hello</Text><Text>{b} {c}:{item.v}</Text></View>);
     }
+    const saveToFavorites = async (item,book,chapter) => {
+        console.log('Storing...')
+        const obj={book:book,chapter:chapter,verse:item.v};
+        console.log('obj...')
+        console.log(obj)
+        await AsyncStorage.setItem('favorites-'+(book+chapter+verse).replace(/\s/g, ''), JSON.stringify(obj), (err) => {
+            if (err) {
+                console.log("an error");
+                throw err;
+            }
+            console.log("success saving");
+        }).catch((err) => {
+            console.log("saving error is: " + err);
+        });
+        };
     const Verse = ({ item, b, c }) => (
         <View style={styles.item}>
             <View style={styles.verseHeader}>
                 <Text style={styles.verseHeaderText}>{b} {c}:{item.v}</Text>
-                <View style={{flexDirection:'row',marginEnd:10}}>
-                    <View style={{flexDirection:'row'}}>
-                        <Ionic name="heart-outline" color={'#BB5C04'} size={20} />
-                        <Ionic name="heart-outline" color={'#BB5C04'} size={20} />
-                        <Ionic name="share-outline" color={'#BB5C04'} size={20} />
+                <View style={{flexDirection:'row'}}>
+                    <View style={{flexDirection:'row',marginRight:10,paddingRight:20}}>
+                        <TouchableOpacity onPress={()=>{Clipboard.getString()===item.t?'':Clipboard.setString(item.t);
+                        ToastAndroid.show("Copied",ToastAndroid.SHORT)}}><Ionic style={{marginRight:8}} name="copy-outline" color={'#BB5C04'} size={20} /></TouchableOpacity>
+                        <TouchableOpacity onPress={()=>saveToFavorites(item,b,c)}><Ionic style={{marginRight:8}} name="heart-outline" color={'#BB5C04'} size={20} /></TouchableOpacity>
+                        <TouchableOpacity><Ionic style={{marginRight:8}} name="share-social-outline" color={'#BB5C04'} size={20} /></TouchableOpacity>
                     </View>
-                <TouchableOpacity style={styles.verseOptions} ref={ref2}><Ionic name="ellipsis-horizontal" color={'#BB5C04'} size={20} /></TouchableOpacity>
+                <TouchableOpacity style={[styles.verseOptions,{marginLeft:10}]} ref={ref2}><Ionic name="ellipsis-horizontal" color={'#BB5C04'} size={20} /></TouchableOpacity>
                 </View>
             </View>
             <Text style={styles.title}>{item.t}</Text>
