@@ -1,20 +1,10 @@
-import AppLoading from "expo-app-loading";
 import { FlatList, RefreshControl, SafeAreaView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from "react-native";
-import { useFonts } from 'expo-font';
 import Ionic from "react-native-vector-icons/Ionicons";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { useCallback, useLayoutEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import uuid from "react-native-uuid"
 import { useFocusEffect } from "@react-navigation/native";
-// import notes from '../assets/notes.json'
-
-const getFonts = {
-    'BoldFont': require('.././assets/fonts/Barlow-Bold.ttf'),
-    'SemiBoldFont': require('.././assets/fonts/Barlow-SemiBold.ttf'),
-    'MediumFont': require('.././assets/fonts/Barlow-Medium.ttf'),
-};
 
 function Notebook({ route, navigation }) {
     var mynotes = new Object();
@@ -185,28 +175,22 @@ function Notes({ navigation }) {
     );
 }
 export default function NotesScreen() {
-    const [fontsLoaded] = useFonts(getFonts);
+    const Stack = createNativeStackNavigator();
+    return (
+        <SafeAreaView style={styles.wrapper}>
+            <Stack.Navigator>
+                <Stack.Screen options={({ navigation }) => ({
+                    headerRight: (props) => (
+                        <TouchableOpacity onPress={() => navigation.navigate('Search')}>
+                            <Ionic name="search-sharp" size={22} style={{ paddingRight: 10 }} />
+                        </TouchableOpacity>
+                    ), title: 'Notes'
+                })} name='notes' component={Notes} />
+                <Stack.Screen name='notebook' component={Notebook} />
 
-    if (!fontsLoaded) {
-        return <AppLoading />
-    } else {
-        const Stack = createNativeStackNavigator();
-        return (
-            <SafeAreaView style={styles.wrapper}>
-                <Stack.Navigator>
-                    <Stack.Screen options={({ navigation }) => ({
-                        headerRight: (props) => (
-                            <TouchableOpacity onPress={() => navigation.navigate('Search')}>
-                                <Ionic name="search-sharp" size={22} style={{ paddingRight: 10 }} />
-                            </TouchableOpacity>
-                        ), title: 'Notes'
-                    })} name='notes' component={Notes} />
-                    <Stack.Screen name='notebook' component={Notebook} />
-
-                </Stack.Navigator>
-            </SafeAreaView>
-        );
-    }
+            </Stack.Navigator>
+        </SafeAreaView>
+    );
 }
 
 const styles = StyleSheet.create({

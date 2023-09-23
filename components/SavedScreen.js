@@ -2,6 +2,7 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { FlatList, RefreshControl, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from "react-native";
 import kikuyubibledb from '../assets/kikuyubibledb';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useLayoutEffect, useState } from "react";
 
 export default function SavedScreen() {
     ToastAndroid.show('Loading...', ToastAndroid.SHORT);
@@ -14,29 +15,35 @@ export default function SavedScreen() {
             </View>)
     }
     function Fav() {
-        var myR = async () => {
+        /* const favorites = [{ id: 1, book: 1, chapter: 2, verse: 4 }, { id: 2, book: 39, chapter: 17, verse: 21 }, { id: 3, book: 38, chapter: 3, verse: 10 }, { id: 4, book: 10, chapter: 2, verse: 4 }];
+          */
+         //
+        const [myR, setMyR] = useState([]);
+        const fetchAllItems = async () => {
             console.log("Fetching data...")
-            await AsyncStorage.getAllKeys((err, keys) => {
-                AsyncStorage.multiGet(keys, (err, stores) => {
-                    stores.map((result, i, store) => {
-                        let key = store[i][0];
-                        let value = store[i][1];
-                        // console.log("Key-" + key)
-                        // console.log("Value-" + value)
-                        const arr = [];
-                        if (key.startsWith('favorites')) {
-                            v = JSON.parse(value)
-                            arr.push(v);
-                        }
-                    }); arr = arr[0];
-                    console.log(arr.length + ' items\nitems:' + arr)
+            try {
+                await AsyncStorage.getAllKeys((err, keys) => {
+                    AsyncStorage.multiGet(keys, (err, stores) => {
+                        stores.map((result, i, store) => {
+                            let key = store[i][0];
+                            let value = store[i][1];
+                            // console.log("Key-" + key)
+                            // console.log("Value-" + value)
+                            if (key.startsWith('favorites')) {
+                                v = JSON.parse(value)
+                                //arr.push(v);
+                                setMyR(v);
+                            }
+                        });
+                        //console.log(arr.length + ' items:' + arr);
+                    });
                 });
-            });
-            return arr;
+            } catch (error) {
+                console.log("ERROR FETCHING:" + error)
+            }
         }
-        //fetchAllItems();
-        const favorites = [{ id: 1, book: 1, chapter: 2, verse: 4 }, { id: 2, book: 39, chapter: 17, verse: 21 }, { id: 3, book: 38, chapter: 3, verse: 10 }, { id: 4, book: 10, chapter: 2, verse: 4 }];
-        console.log("favorites:" + favorites)
+        useLayoutEffect(()=>{fetchAllItems()},[])
+        
         const Verse = ({ item }) => (
             <View style={styles.item}>
                 <Text style={styles.verseText}>{kikuyubibledb[BibleBooks[item.book]][0][item.chapter][item.verse - 1].t}</Text>
@@ -96,12 +103,12 @@ const styles = StyleSheet.create({
     },
     verseText: {
         fontSize: 17,
-        fontFamily: 'RegularFont',
-        maxHeight: 40,
+        fontFamily: 'OldRegularFont',
+        maxHeight: 35,
     },
     verseRef: {
         marginTop: 3,
         fontSize: 16,
-        fontFamily: 'RegularFont'
+        fontFamily: 'OldBoldFont'
     }
 });

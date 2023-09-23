@@ -1,23 +1,13 @@
 import { FlatList, RefreshControl, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import kikuyubibledb from "../../assets/kikuyubibledb";
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { useFonts } from 'expo-font';
 import { BibleContext } from "../../contexts/BibleContext";
-import AppLoading from "expo-app-loading";
 import Ionic from "react-native-vector-icons/Ionicons";
 import Swiper from "react-native-swiper";
 
-
-const getFonts = {
-    'BoldFont': require('../.././assets/fonts/Barlow-Bold.ttf'),
-    'SemiBoldFont': require('../.././assets/fonts/Barlow-SemiBold.ttf'),
-    'MediumFont': require('../.././assets/fonts/Barlow-Medium.ttf'),
-    'RegularFont': require('../.././assets/fonts/Barlow-Regular.ttf')
-};
 export default function ScriptureReading({ navigation }) {
     myRef = React.useRef(null);
     const { book, chapter, verse, setBible } = useContext(BibleContext);
-    const [fontsLoaded] = useFonts(getFonts);
     const Verse = ({ item, b, c }) => (
         <View style={styles.item}>
             <View style={styles.verseHeader}>
@@ -35,34 +25,29 @@ export default function ScriptureReading({ navigation }) {
             setRefreshing(false);
         }, 1000);
     }, []);
-    if (!fontsLoaded) {
+    return (
+        <SafeAreaView style={styles.container}>
+            <Swiper showPagination={true} showsButtons={false} loop={false} index={chapter - 1} dot={<View></View>} activeDot={<View></View>} onIndexChanged={(i) => { navigation.setOptions({ title: book + ' ' + (i + 1), }); }} loadMinimal={true} loadMinimalSize={1}>
+                {
+                    Object.keys(kikuyubibledb[book][0]).map(function (element, key) {
+                        return (<View key={key}>
+                            <FlatList
+                                ref={(ref) => myRef = ref}
+                                key={key}
+                                data={kikuyubibledb[book][0][element]}
+                                initialScrollIndex={(chapter - 1) === key ? (verse>4?Math.abs(verse - 4):verse-1) : 0}
+                                renderItem={({ item }) => <Verse item={item} b={book} c={element} />}
+                                keyExtractor={item => item.v}
+                                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+                            />
+                        </View>)
+                    })
 
-        return <AppLoading />
-    } else {
-        return (
-            <SafeAreaView style={styles.container}>
-                <Swiper showPagination={true} showsButtons={false} loop={false} index={chapter - 1} dot={<View></View>} activeDot={<View></View>} onIndexChanged={(i) => { navigation.setOptions({ title: book + ' ' + (i + 1), }); }} loadMinimal={true} loadMinimalSize={1}>
-                    {
-                        Object.keys(kikuyubibledb[book][0]).map(function (element, key) {
-                            return (<View key={key}>
-                                <FlatList
-                                    ref={(ref) => myRef = ref}
-                                    key={key}
-                                    data={kikuyubibledb[book][0][element]}
-                                    initialScrollIndex={(chapter - 1) === key ? verse - 1 : 0}
-                                    renderItem={({ item }) => <Verse item={item} b={book} c={element} />}
-                                    keyExtractor={item => item.v}
-                                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-                                />
-                            </View>)
-                        })
+                }
+            </Swiper>
 
-                    }
-                </Swiper>
-
-            </SafeAreaView>
-        );
-    }
+        </SafeAreaView>
+    );
 }
 const styles = StyleSheet.create({
     wrapper: {

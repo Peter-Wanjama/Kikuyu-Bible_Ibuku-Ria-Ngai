@@ -10,16 +10,9 @@ import kikuyubibledb from "../assets/kikuyubibledb";
 import { BibleContext } from "../contexts/BibleContext";
 
 
-const getFonts = {
-    'BoldFont': require('.././assets/fonts/Barlow-Bold.ttf'),
-    'SemiBoldFont': require('.././assets/fonts/Barlow-SemiBold.ttf'),
-    'MediumFont': require('.././assets/fonts/Barlow-Medium.ttf'),
-    'RegularFont': require('.././assets/fonts/Barlow-Regular.ttf')
-};
 export default function HomeScreen({navigation}) {
     const {setBible}=useContext(BibleContext);
     const [data, setData] = useState([]);
-    const [fontsLoaded] = useFonts(getFonts);
     const [testament, setTestament] = useState('');
     const bibleSheet = useRef(null);
     const [bibleselected] = useState({
@@ -82,18 +75,9 @@ export default function HomeScreen({navigation}) {
         }
 
     }
-    if (!fontsLoaded) {
-        return <AppLoading />
-    } else {
-        return (
+    return (
             <View style={styles.container}>
                 <View style={styles.appBody}>
-                    {/* <View style={styles.appHeader}>
-                        <Text style={styles.appName}>Kikuyu Bible</Text>
-                        <TouchableOpacity>
-                            <Ionic name="search-sharp" color={"#222"} size={20} />
-                        </TouchableOpacity>
-                    </View> */}
                     <Image style={styles.logo} source={require('.././assets/logo.png')} />
                     <View style={styles.dailyVerseBody}>
                         <Text style={styles.dailyVerseHeader}>Daily Verse</Text>
@@ -168,7 +152,6 @@ export default function HomeScreen({navigation}) {
                 </View>
             </View>
         );
-    }
 }
 
 const styles1 = StyleSheet.create({

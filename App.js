@@ -1,5 +1,6 @@
 import { StyleSheet, View, SafeAreaView, TouchableOpacity } from 'react-native';
 import { useEffect } from 'react';
+import { useFonts } from 'expo-font';
 import { BibleProvider } from './contexts/BibleContext';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
@@ -9,13 +10,25 @@ import SavedScreen from './components/SavedScreen';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Home from './components/Home';
+import AppLoading from 'expo-app-loading';
 
-
+const getFonts = {
+  'BoldFont': require('./assets/fonts/Barlow-Bold.ttf'),
+  'SemiBoldFont': require('./assets/fonts/Barlow-SemiBold.ttf'),
+  'MediumFont': require('./assets/fonts/Barlow-Medium.ttf'),
+  'RegularFont': require('./assets/fonts/Barlow-Regular.ttf'),
+  'OldRegularFont': require('./assets/fonts/georgia.ttf'),
+  'OldBoldFont': require('./assets/fonts/georgiab.ttf'),
+};
 export default function App() {
+  const [fontsLoaded] = useFonts(getFonts);
   const Tab = createBottomTabNavigator();
-    useEffect(() => {
+  useEffect(() => {
     console.log("App Loaded:")
-  }); 
+  });
+  if (!fontsLoaded) {
+    return <AppLoading />
+  } else {
     return (
       <BibleProvider>
         <SafeAreaView style={styles.wrapper}>
@@ -29,7 +42,7 @@ export default function App() {
                     if (route.name === 'Home') {
                       iconName = focused ? 'ios-home' : 'ios-home-outline';
                     } else if (route.name === 'Notes') {
-                      return <FontAwesome name={iconName = focused ? "sticky-note":"sticky-note-o"} size={size} color={colour} />
+                      return <FontAwesome name={iconName = focused ? "sticky-note" : "sticky-note-o"} size={size} color={colour} />
                     } else if (route.name === 'Saved') {
                       iconName = focused ? 'heart' : 'heart-outline';
                     } else if (route.name === 'Settings') {
@@ -38,8 +51,8 @@ export default function App() {
                     return <Ionic name={iconName} size={size} color={colour} />
                   },
                 })}>
-                <Tab.Screen name="Home" options={{headerShown:false}} component={Home} />
-                <Tab.Screen options={{headerShown:false}} name="Notes" component={NotesScreen} />
+                <Tab.Screen name="Home" options={{ headerShown: false }} component={Home} />
+                <Tab.Screen options={{ headerShown: false }} name="Notes" component={NotesScreen} />
                 <Tab.Screen name="Saved" component={SavedScreen} />
                 <Tab.Screen name="Settings" component={SettingsScreen} />
               </Tab.Navigator>
@@ -48,6 +61,7 @@ export default function App() {
         </SafeAreaView>
       </BibleProvider>
     );
+  }
 }
 
 const styles = StyleSheet.create({
