@@ -3,7 +3,6 @@ import { ActivityIndicator, StyleSheet, Text, TextInput, ToastAndroid, Touchable
 import Ionic from "react-native-vector-icons/Ionicons";
 import VList from "./VList";
 import { useState } from "react";
-import * as Progress from 'react-native-progress';
 
 function BibleSearch() {
     return (
@@ -30,7 +29,7 @@ export default function SearchPage() {
         <View styles={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <View style={styles.searchBox}>
-                    <TextInput style={styles.searchInput} placeholder="Type to here to search" />
+                    <TextInput style={styles.searchInput} placeholder="Type text here to search" />
                     <TouchableOpacity onPress={()=>setLoading(!loading)}><Ionic style={styles.searchIcon} name={'search-outline'} color={'#a5a5a5'} size={20} /></TouchableOpacity>
                 </View>
                 <View style={styles.searchScope}>
@@ -66,7 +65,7 @@ const styles = StyleSheet.create({
     searchIcon: {
     },
     searchInput: {
-        marginLeft: 1,
+        marginLeft: -5,
     },
     searchResults: {
         padding: 5,
