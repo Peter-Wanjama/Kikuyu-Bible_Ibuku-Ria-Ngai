@@ -1,4 +1,4 @@
-import { Clipboard, FlatList, RefreshControl, SafeAreaView, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from "react-native";
+import { Clipboard, FlatList, RefreshControl, SafeAreaView, Share, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from "react-native";
 import kikuyubibledb from "../../assets/kikuyubibledb";
 import React, { useCallback, useContext, useState } from "react";
 import { BibleContext } from "../../contexts/BibleContext";
@@ -10,17 +10,17 @@ export default function ScriptureReading({ navigation }) {
     myRef = React.useRef(null);
     ref2 = React.useRef(null);
     const { book, chapter, verse, setBible } = useContext(BibleContext);
-    const getMoreIcons=(item,b,c)=>{
-        console.log('more '+item.v)
+    const getMoreIcons = (item, b, c) => {
+        console.log('more ' + item.v)
         //ref2.current?.
-        return(<View style={{flexDirection:'row',backgroundColor:'red'}}><Text>Hello</Text><Text>{b} {c}:{item.v}</Text></View>);
+        return (<View style={{ flexDirection: 'row', backgroundColor: 'red' }}><Text>Hello</Text><Text>{b} {c}:{item.v}</Text></View>);
     }
-    const saveToFavorites = async (item,book,chapter) => {
+    const saveToFavorites = async (item, book, chapter) => {
         console.log('Storing...')
-        const obj={book:book,chapter:chapter,verse:item.v};
+        const obj = { book: book, chapter: chapter, verse: item.v };
         console.log('obj...')
         console.log(obj)
-        await AsyncStorage.setItem('favorites-'+(book+chapter+verse).replace(/\s/g, ''), JSON.stringify(obj), (err) => {
+        await AsyncStorage.setItem('favorites-' + (book + chapter + verse).replace(/\s/g, ''), JSON.stringify(obj), (err) => {
             if (err) {
                 console.log("an error");
                 throw err;
@@ -29,19 +29,44 @@ export default function ScriptureReading({ navigation }) {
         }).catch((err) => {
             console.log("saving error is: " + err);
         });
-        };
+    };
+    const [showMoreTools, setShowMoreTools] = useState(false)
+    const [currentItem, setCurrentItem] = useState(-1)
+    const handleMore=(id)=>{
+        console.log('Handling more...'+id)
+        if (showMoreTools&&currentItem!=id) {
+            setCurrentItem(id);
+        }else{
+        setShowMoreTools(!showMoreTools)
+        setCurrentItem(id);
+        }
+    }
+    const shareVerse= async (msg)=>{
+    try {
+        await Share.share({
+            message:msg,
+            title:'Share verse',
+        })
+    } catch (error) {
+        console.log("ERROR SHARING:"+error)
+    }
+    }
     const Verse = ({ item, b, c }) => (
         <View style={styles.item}>
             <View style={styles.verseHeader}>
                 <Text style={styles.verseHeaderText}>{b} {c}:{item.v}</Text>
-                <View style={{flexDirection:'row'}}>
-                    <View style={{flexDirection:'row',marginRight:10,paddingRight:20}}>
-                        <TouchableOpacity onPress={()=>{Clipboard.getString()===item.t?'':Clipboard.setString(item.t);
-                        ToastAndroid.show("Copied",ToastAndroid.SHORT)}}><Ionic style={{marginRight:8}} name="copy-outline" color={'#BB5C04'} size={20} /></TouchableOpacity>
-                        <TouchableOpacity onPress={()=>saveToFavorites(item,b,c)}><Ionic style={{marginRight:8}} name="heart-outline" color={'#BB5C04'} size={20} /></TouchableOpacity>
-                        <TouchableOpacity><Ionic style={{marginRight:8}} name="share-social-outline" color={'#BB5C04'} size={20} /></TouchableOpacity>
-                    </View>
-                <TouchableOpacity style={[styles.verseOptions,{marginLeft:10}]} ref={ref2}><Ionic name="ellipsis-horizontal" color={'#BB5C04'} size={20} /></TouchableOpacity>
+                <View style={{ flexDirection: 'row' }}>
+                    { showMoreTools&&currentItem==item.v?
+                    <View style={{ flexDirection: 'row', marginRight: 10, paddingRight: 20 }}>
+                        <TouchableOpacity onPress={() => {
+                            Clipboard.getString() === item.t ? '' : Clipboard.setString(b+" "+c+":"+item.v+"\n"+item.t);
+                            ToastAndroid.show("Copied", ToastAndroid.SHORT)
+                        }}><Ionic style={{ marginRight: 8 }} name="copy-outline" color={'#BB5C04'} size={20} /></TouchableOpacity>
+                        <TouchableOpacity onPress={() => saveToFavorites(item, b, c)}><Ionic style={{ marginRight: 8 }} name="heart-outline" color={'#BB5C04'} size={20} /></TouchableOpacity>
+                        <TouchableOpacity onPress={()=>shareVerse(b+" "+c+":"+item.v+"(Ibuku rĩa Ngai)\n"+item.t)}><Ionic style={{ marginRight: 8 }} name="share-social-outline" color={'#BB5C04'} size={20} /></TouchableOpacity>
+                    </View> : null
+                    }
+                    <TouchableOpacity onPress={()=>handleMore(item.v)} style={[styles.verseOptions, { marginLeft: 10 }]} ref={ref2}><Ionic name="ellipsis-horizontal" color={'#BB5C04'} size={50} /></TouchableOpacity>
                 </View>
             </View>
             <Text style={styles.title}>{item.t}</Text>
@@ -65,7 +90,7 @@ export default function ScriptureReading({ navigation }) {
                                 ref={(ref) => myRef = ref}
                                 key={key}
                                 data={kikuyubibledb[book][0][element]}
-                                initialScrollIndex={(chapter - 1) === key ? (verse>4?Math.abs(verse - 4):verse-1) : 0}
+                                initialScrollIndex={(chapter - 1) === key ? (verse > 4 ? Math.abs(verse - 3) : verse - 1) : 0}
                                 renderItem={({ item }) => <Verse item={item} b={book} c={element} />}
                                 keyExtractor={item => item.v}
                                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}

@@ -1,5 +1,5 @@
 import { useContext, useLayoutEffect, useRef, useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, ToastAndroid } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, ToastAndroid, Share } from "react-native";
 import Ionic from 'react-native-vector-icons/Ionicons';
 import ActionSheet from "react-native-actions-sheet";
 import dailyVerses from "../assets/dailyVerses";
@@ -9,9 +9,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 export default function HomeScreen({navigation}) {
-    const BibleBooks = Object.keys(kikuyubibledb);
-    //useLayoutEffect(()=>{fetchAllItems();},[])
-    const dailyVerse=dailyVerses[Math.floor(Math.random()*dailyVerses.length)];
+    const OTBooks = Object.keys(kikuyubibledb).slice(0, 39);
+    const NTBooks = Object.keys(kikuyubibledb).slice(-27);
+    // const [dailyVerseIndex, setDailyVerseIndex] = useState(0);
+    // setDailyVerseIndex(Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000)-1);
+    const dailyVerse=dailyVerses[Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000)-1];
     console.log(dailyVerse)
     const saveToFavorites = async () => {
         console.log('Storing...')
@@ -27,64 +29,71 @@ export default function HomeScreen({navigation}) {
         };
     const {setBible}=useContext(BibleContext);
     const [data, setData] = useState([]);
-    const [testament, setTestament] = useState('');
+    // const [testament, setTestament] = useState('');
     const bibleSheet = useRef(null);
-    const [bibleselected] = useState({
-        bookSet: '',
-        chapterSet: 0,
-        verseSet: 0
+    const [BibleObj] = useState({
+        selectedBook: '',
+        selectedChapter: 0,
+        selectedVerse: 0
     });
     const [prepared, setPrepared] = useState('');
     const resetBible=()=>{
-        setData([]); bibleselected.bookSet = ''; bibleselected.verseSet = 0;
-        bibleselected.chapterSet = 0; bibleSheet.current?.hide();
+        setData([]); BibleObj.selectedBook = ''; BibleObj.selectedVerse = 0;
+        BibleObj.selectedChapter = 0; bibleSheet.current?.hide();
     }
     const displayVerse = (value) => {
-        setBible({book:bibleselected.bookSet,chapter:bibleselected.chapterSet,verse:bibleselected.verseSet});
+        setBible({book:BibleObj.selectedBook,chapter:BibleObj.selectedChapter,verse:BibleObj.selectedVerse});
         // console.log(kikuyubibledb['Thama'][0][1][0].t)
-        console.log(kikuyubibledb[bibleselected.bookSet][0][bibleselected.chapterSet][bibleselected.verseSet - 1].t);
-        /* let v = bibleselected.bookSet + " " + bibleselected.chapterSet + "." + bibleselected.verseSet + "\n" +
-            kikuyubibledb[bibleselected.bookSet][0][bibleselected.chapterSet][bibleselected.verseSet - 1].t;
+        console.log(kikuyubibledb[BibleObj.selectedBook][0][BibleObj.selectedChapter][BibleObj.selectedVerse - 1].t);
+        /* let v = BibleObj.selectedBook + " " + BibleObj.selectedChapter + "." + BibleObj.selectedVerse + "\n" +
+            kikuyubibledb[BibleObj.selectedBook][0][BibleObj.selectedChapter][BibleObj.selectedVerse - 1].t;
         setData([v]); */
         resetBible();ToastAndroid.show('Please wait...',ToastAndroid.LONG);
         navigation.navigate('ScriptureReading');
     }
     const handleVerse = (value) => {
-        console.log(bibleselected.chapterSet);
+        console.log(BibleObj.selectedChapter);
         setPrepared(prepared + " " + value);
-        setData((Object.keys(kikuyubibledb[bibleselected.bookSet][0][bibleselected.chapterSet])).map(function (x) {
+        setData((Object.keys(kikuyubibledb[BibleObj.selectedBook][0][BibleObj.selectedChapter])).map(function (x) {
             return parseInt(x) + 1;
         }));
     }
     const handleChapter = (value) => {
-        console.log(bibleselected.bookSet);
+        console.log(BibleObj.selectedBook);
         setPrepared(value);
-        setData((Object.keys(kikuyubibledb[bibleselected.bookSet][0])).map(function (x) {
+        setData((Object.keys(kikuyubibledb[BibleObj.selectedBook][0])).map(function (x) {
             return parseInt(x);
         }));
     }
     const handleBible = (value) => {
-        setTestament(value);
         switch (value) {
             case 'OT':
-                console.log("OT");
                 setPrepared('Kirikaniro Gikũrũ');
-                setData(Object.keys(kikuyubibledb).slice(0, 39));
-                bibleSheet.current?.show();
+                setData(OTBooks);
+                bibleSheet.current?.show();console.log("OT");
                 break;
 
             case 'NT':
-                console.log("NT");
                 setPrepared('Kirikaniro Kĩerũ');
-                setData(Object.keys(kikuyubibledb).slice(-27));
-                // console.log(data.length);
-                bibleSheet.current?.show();
+                setData(NTBooks);
+                bibleSheet.current?.show();console.log("NT");
                 break;
 
             default:
                 break;
         }
 
+    }
+    const shareVerse= async ()=>{
+        try {
+            await Share.share({
+                message:dailyVerse.book+" "+dailyVerse.chapter+":"+dailyVerse.verse+"(Ibuku rĩa Ngai)\n"+
+                kikuyubibledb[dailyVerse.book][0][dailyVerse.chapter][dailyVerse.verse-1].t,
+                title:'Share verse',
+            })
+        } catch (error) {
+            console.log("ERROR SHARING:"+error)
+        }
     }
     return (
             <View style={styles.container}>
@@ -102,7 +111,7 @@ export default function HomeScreen({navigation}) {
                                 <TouchableOpacity onPress={saveToFavorites} style={{ paddingRight: 15 }}>
                                     <Ionic name="heart-outline" color={"#BB5C04"} size={30} />
                                 </TouchableOpacity>
-                                <TouchableOpacity>
+                                <TouchableOpacity onPress={shareVerse}>
                                     <Ionic name="share-social-outline" color={"#BB5C04"} size={30} />
                                 </TouchableOpacity>
                             </View>
@@ -135,27 +144,27 @@ export default function HomeScreen({navigation}) {
                             }<View style={styles.dividerBottom}></View>
 
                             <ScrollView horizontal={false} vertical={true} style={{ flex: 1 }}>
-                                <View style={(bibleselected.bookSet === '' ? styles.booksList : styles2.booksList)}>
+                                <View style={(BibleObj.selectedBook === '' ? styles.booksList : styles2.booksList)}>
                                     {
 
                                         data.map(function (key, index) {
                                             //console.log(key);
                                             return (<TouchableOpacity onPress={() => {
-                                                if (bibleselected.bookSet) {
-                                                    if (bibleselected.chapterSet) {
-                                                        if (!bibleselected.verseSet) {
-                                                            bibleselected.verseSet = key; displayVerse(key);
+                                                if (BibleObj.selectedBook) {
+                                                    if (BibleObj.selectedChapter) {
+                                                        if (!BibleObj.selectedVerse) {
+                                                            BibleObj.selectedVerse = key; displayVerse(key);
                                                         }
 
                                                     } else {
-                                                        bibleselected.chapterSet = key; handleVerse(key);
+                                                        BibleObj.selectedChapter = key; handleVerse(key);
                                                     }
 
                                                 }
-                                                else { bibleselected.bookSet = key; handleChapter(key); }
+                                                else { BibleObj.selectedBook = key; handleChapter(key); }
 
-                                            }} key={key} style={(bibleselected.bookSet === '' ? styles1.bookListItem : (bibleselected.verseSet? styles.bookListItem: styles2.bookListItem))}>
-                                                <Text style={(bibleselected.bookSet === '' ? styles1.bookListItemText : (bibleselected.verseSet? styles.bookListItemText: styles2.bookListItemText))}>{key}</Text>
+                                            }} key={key} style={(BibleObj.selectedBook === '' ? styles1.bookListItem : (BibleObj.selectedVerse? styles.bookListItem: styles2.bookListItem))}>
+                                                <Text style={(BibleObj.selectedBook === '' ? styles1.bookListItemText : (BibleObj.selectedVerse? styles.bookListItemText: styles2.bookListItemText))}>{key}</Text>
                                             </TouchableOpacity>);
                                         })
                                     }
