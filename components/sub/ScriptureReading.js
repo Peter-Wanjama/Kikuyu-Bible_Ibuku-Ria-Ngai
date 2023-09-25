@@ -82,6 +82,7 @@ export default function ScriptureReading({ navigation }) {
     }, []);
     return (
         <SafeAreaView style={styles.container}>
+            
             <Swiper showPagination={true} showsButtons={false} loop={false} index={chapter - 1} dot={<View></View>} activeDot={<View></View>} onIndexChanged={(i) => { navigation.setOptions({ title: book + ' ' + (i + 1), }); }} loadMinimal={true} loadMinimalSize={1}>
                 {
                     Object.keys(kikuyubibledb[book][0]).map(function (element, key) {

@@ -10,7 +10,9 @@ import {
 import kikuyubibledb from "../../assets/kikuyubibledb";
 
 
-const getItem = (_data, index) => ({id:kikuyubibledb['Mathayo'][0][17][index].v,title:(index+1)+" "+kikuyubibledb['Mathayo'][0][17][index].t});
+const getItem = (_data, index) => ({
+    id:kikuyubibledb['Mathayo'][0][17][index].v,title:(index+1)+" "+kikuyubibledb['Mathayo'][0][17][index].t
+});
 console.log(kikuyubibledb['Mathayo'][0][17]);
 
 const getItemCount = _data => 27;
