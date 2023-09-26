@@ -1,6 +1,6 @@
 import { Clipboard, FlatList, RefreshControl, SafeAreaView, Share, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from "react-native";
 import kikuyubibledb from "../../assets/kikuyubibledb";
-import React, { useCallback, useContext, useState } from "react";
+import React, { useLayoutEffect,useCallback, useContext, useState } from "react";
 import { BibleContext } from "../../contexts/BibleContext";
 import Ionic from "react-native-vector-icons/Ionicons";
 import Swiper from "react-native-swiper";
@@ -10,6 +10,10 @@ export default function ScriptureReading({ navigation }) {
     myRef = React.useRef(null);
     ref2 = React.useRef(null);
     const { book, chapter, verse, setBible } = useContext(BibleContext);
+    const [showMoreTools, setShowMoreTools] = useState(false)
+    const [currentItem, setCurrentItem] = useState(-1)
+    const [favorites, setFavorites] = useState([]);
+
     const getMoreIcons = (item, b, c) => {
         console.log('more ' + item.v)
         //ref2.current?.
@@ -17,21 +21,28 @@ export default function ScriptureReading({ navigation }) {
     }
     const saveToFavorites = async (item, book, chapter) => {
         console.log('Storing...')
+        const id = ('favorites-' + (book + chapter + item.v)).replace(/\s/g, '');
+        setFavorites([...favorites,id]);
         const obj = { book: book, chapter: chapter, verse: item.v };
         console.log('obj...')
         console.log(obj)
-        await AsyncStorage.setItem(('favorites-' + (book + chapter + item.v)).replace(/\s/g, ''), JSON.stringify(obj), (err) => {
+        await AsyncStorage.setItem(id, JSON.stringify(obj), (err) => {
             if (err) {
                 console.log("an error");
                 throw err;
             }
-            console.log("success saving..."+('favorites-' + (book + chapter + item.v)).replace(/\s/g, ''));
+            console.log("success saving..."+id);
         }).catch((err) => {
             console.log("saving error is: " + err);
         });
     };
-    const [showMoreTools, setShowMoreTools] = useState(false)
-    const [currentItem, setCurrentItem] = useState(-1)
+    const deleteItem = async (item, book, chapter) => {
+        const id = ('favorites-' + (book + chapter + item.v)).replace(/\s/g, '');
+        console.log("Deleting..." + id)
+        var x=favorites; x=x.filter((i)=>i!=id); setFavorites(x);
+        await AsyncStorage.removeItem(id)
+    }
+    
     const handleMore=(id)=>{
         console.log('Handling more...'+id)
         if (showMoreTools&&currentItem!=id) {
@@ -62,11 +73,14 @@ export default function ScriptureReading({ navigation }) {
                             Clipboard.getString() === item.t ? '' : Clipboard.setString(b+" "+c+":"+item.v+"\n"+item.t);
                             ToastAndroid.show("Copied", ToastAndroid.SHORT)
                         }}><Ionic style={{ marginRight: 8 }} name="copy-outline" color={'#BB5C04'} size={20} /></TouchableOpacity>
-                        <TouchableOpacity onPress={() => saveToFavorites(item, b, c)}><Ionic style={{ marginRight: 8 }} name="heart-outline" color={'#BB5C04'} size={20} /></TouchableOpacity>
+                        {favorites.includes(('favorites-' + (b + c + item.v)).replace(/\s/g, '')) ?
+                        <TouchableOpacity onPress={() => deleteItem(item, b, c)}><Ionic style={{ marginRight: 8 }} name="heart" color={'#BB5C04'} size={20} /></TouchableOpacity>
+                        :<TouchableOpacity onPress={() => saveToFavorites(item, b, c)}><Ionic style={{ marginRight: 8 }} name="heart-outline" color={'#BB5C04'} size={20} /></TouchableOpacity>
+                        }
                         <TouchableOpacity onPress={()=>shareVerse(b+" "+c+":"+item.v+"(Ibuku rĩa Ngai)\n"+item.t)}><Ionic style={{ marginRight: 8 }} name="share-social-outline" color={'#BB5C04'} size={20} /></TouchableOpacity>
                     </View> : null
                     }
-                    <TouchableOpacity onPress={()=>handleMore(item.v)} style={[styles.verseOptions, { marginLeft: 10 }]} ref={ref2}><Ionic name="ellipsis-horizontal" color={'#BB5C04'} size={20} /></TouchableOpacity>
+                    <TouchableOpacity onPress={()=>handleMore(item.v)} style={[styles.verseOptions, { marginLeft: 10 }]} ref={ref2}><Ionic name="ellipsis-horizontal" color={'#BB5C04'} size={50} /></TouchableOpacity>
                 </View>
             </View>
             <Text style={styles.title}>{item.t}</Text>
@@ -81,6 +95,17 @@ export default function ScriptureReading({ navigation }) {
             setRefreshing(false);
         }, 1000);
     }, []);
+    useLayoutEffect(() => {
+        AsyncStorage.getAllKeys((err, keys) => {
+            var x = []
+            keys.forEach((key) => {
+                if (key.startsWith('favorites')) {
+                    x.push(key)
+                }
+            })
+            setFavorites(x);
+        });
+    }, [])
     return (
         <SafeAreaView style={styles.container}>
             

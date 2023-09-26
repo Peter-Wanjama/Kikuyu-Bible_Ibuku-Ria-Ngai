@@ -15,6 +15,17 @@ export default function HomeScreen({ navigation }) {
     // setDailyVerseIndex(Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000)-1);
     const dailyVerse = dailyVerses[Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000) - 1];
     // console.log(dailyVerse)
+    const { setBible } = useContext(BibleContext);
+    const [data, setData] = useState([]);
+    const [favorites, setFavorites] = useState([]);
+    const bibleSheet = useRef(null);
+    const [BibleObj] = useState({
+        selectedBook: '',
+        selectedChapter: 0,
+        selectedVerse: 0
+    });
+    const [prepared, setPrepared] = useState('');
+    
     const saveToFavorites = async () => {
         console.log('Storing...')
         const id = 'favorites-' + (dailyVerse.book + dailyVerse.chapter + dailyVerse.verse).replace(/\s/g, '');
@@ -34,16 +45,7 @@ export default function HomeScreen({ navigation }) {
         var x=favorites; x=x.filter((id)=>id!=id_dailyVerse); setFavorites(x);
         await AsyncStorage.removeItem(id_dailyVerse)
     }
-    const { setBible } = useContext(BibleContext);
-    const [data, setData] = useState([]);
-    const [favorites, setFavorites] = useState([]);
-    const bibleSheet = useRef(null);
-    const [BibleObj] = useState({
-        selectedBook: '',
-        selectedChapter: 0,
-        selectedVerse: 0
-    });
-    const [prepared, setPrepared] = useState('');
+    
 
     useLayoutEffect(() => {
         AsyncStorage.getAllKeys((err, keys) => {
