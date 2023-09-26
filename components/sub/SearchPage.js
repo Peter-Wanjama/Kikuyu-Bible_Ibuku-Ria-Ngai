@@ -66,7 +66,7 @@ export default function SearchPage({navigation}) {
             <View style={styles.verseHeader}>
                 <Text style={styles.verseHeaderText}>{item.book} {item.chapter}:{item.verse- -1}</Text>
             </View>
-            <TouchableOpacity onPress={()=>{setBible({book:item.book,chapter:item.chapter,verse:item.verse});navigation.navigate('ScriptureReading')}}><Text style={styles.title}>{kikuyubibledb[item.book][0][item.chapter][item.verse].t}</Text></TouchableOpacity>
+            <TouchableOpacity onPress={()=>{ToastAndroid.show('Please wait',ToastAndroid.SHORT);setBible({book:item.book,chapter:item.chapter,verse:item.verse});navigation.navigate('ScriptureReading')}}><Text style={styles.title}>{kikuyubibledb[item.book][0][item.chapter][item.verse].t}</Text></TouchableOpacity>
         </View>
     );
     return (
