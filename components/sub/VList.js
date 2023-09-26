@@ -30,7 +30,7 @@ const VList = () => {
 
             <VirtualizedList
             ref={myRef}
-                initialNumToRender={4}
+                initialNumToRender={14}
                 renderItem={({ item }) => <Item title={item.title} />}
                 keyExtractor={item => item.id}
                 getItemCount={getItemCount}

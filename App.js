@@ -1,5 +1,5 @@
 import { StyleSheet, View, SafeAreaView } from 'react-native';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useFonts } from 'expo-font';
 import { BibleProvider } from './contexts/BibleContext';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -10,7 +10,9 @@ import SavedScreen from './components/SavedScreen';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Home from './components/Home';
-import AppLoading from 'expo-app-loading';
+// import AppLoading from 'expo-app-loading';
+import * as SplashScreen from 'expo-splash-screen';
+import { Platform } from 'react-native';
 
 const getFonts = {
   'BoldFont': require('./assets/fonts/Barlow-Bold.ttf'),
@@ -20,15 +22,18 @@ const getFonts = {
   'OldRegularFont': require('./assets/fonts/georgia.ttf'),
   'OldBoldFont': require('./assets/fonts/georgiab.ttf'),
 };
+
 export default function App() {
   const [fontsLoaded] = useFonts(getFonts);
   const Tab = createBottomTabNavigator();
-  useEffect(() => {
-    console.log("App Loaded:")
-  });
+
   if (!fontsLoaded) {
-    return <AppLoading />
+    console.log("Fonts not loaded")
+    SplashScreen.preventAutoHideAsync();
+    return null;
   } else {
+    console.log('App loaded.\n'+Platform.OS+' '+Platform.Version);
+    SplashScreen.hideAsync();
     return (
       <BibleProvider>
         <SafeAreaView style={styles.wrapper}>

@@ -16,7 +16,7 @@ function Bookmarks() {
     );
 }
 function Favorites() {
-    const [arr, setArr] = useState([]);
+    const [arr, setArr] = useState({id:'',book:'',chapter:'',verse:''});
     var myR = [];
     const BibleBooks = Object.keys(kikuyubibledb);
     const fetchAllItems = async () => {
@@ -37,22 +37,22 @@ function Favorites() {
             });
         });
     }
-    const deleteNote = async ({ item }) => {
-        console.log("Deleting..." + item.id + " " + item.content)
-        await AsyncStorage.removeItem(item.id)
+    const deleteItem = async (id ) => {
+        console.log("Deleting..." + id)
+        await AsyncStorage.removeItem(id)
         onRefresh()
     }
     const Verse = ({ item }) => (
         <View style={styles.item}>
             <Text style={styles.verseText}>{kikuyubibledb[item.book][0][item.chapter][item.verse - 1].t}</Text>
-            <Text style={styles.verseRef}>{item.book} {item.chapter}:{item.verse}</Text>
+            <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                <Text style={styles.verseRef}>{item.book} {item.chapter}:{item.verse}</Text>
+                <TouchableOpacity style={{ marginRight: 25 }} onPress={() => deleteItem(item.id)} ><FontAwesome name="trash" size={20} color={'#939393'} /></TouchableOpacity>
+                </View>
         </View>
     );
     
     const [refreshing, setRefreshing] = useState(false);
-    useFocusEffect(() => {
-        console.log("note view")
-    })
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);
@@ -63,7 +63,7 @@ function Favorites() {
             setRefreshing(false);
         }, 1000);
     }, []);
-    useLayoutEffect(() => {
+    useLayoutEffect(() => {console.log("note view");//AsyncStorage.clear();
         fetchAllItems();
         setArr(myR)
     }, []);
@@ -99,9 +99,9 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        justifyContent: 'flex-end',
-        alignItems: 'right',
-        flexDirection: 'row'
+        // justifyContent: 'flex-end',
+        // alignItems: 'right',
+        // flexDirection: 'row'
     },
     nav: {
     },

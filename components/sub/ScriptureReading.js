@@ -20,12 +20,12 @@ export default function ScriptureReading({ navigation }) {
         const obj = { book: book, chapter: chapter, verse: item.v };
         console.log('obj...')
         console.log(obj)
-        await AsyncStorage.setItem('favorites-' + (book + chapter + verse).replace(/\s/g, ''), JSON.stringify(obj), (err) => {
+        await AsyncStorage.setItem(('favorites-' + (book + chapter + item.v)).replace(/\s/g, ''), JSON.stringify(obj), (err) => {
             if (err) {
                 console.log("an error");
                 throw err;
             }
-            console.log("success saving");
+            console.log("success saving..."+('favorites-' + (book + chapter + item.v)).replace(/\s/g, ''));
         }).catch((err) => {
             console.log("saving error is: " + err);
         });
