@@ -66,7 +66,7 @@ export default function ScriptureReading({ navigation }) {
                         <TouchableOpacity onPress={()=>shareVerse(b+" "+c+":"+item.v+"(Ibuku rĩa Ngai)\n"+item.t)}><Ionic style={{ marginRight: 8 }} name="share-social-outline" color={'#BB5C04'} size={20} /></TouchableOpacity>
                     </View> : null
                     }
-                    <TouchableOpacity onPress={()=>handleMore(item.v)} style={[styles.verseOptions, { marginLeft: 10 }]} ref={ref2}><Ionic name="ellipsis-horizontal" color={'#BB5C04'} size={50} /></TouchableOpacity>
+                    <TouchableOpacity onPress={()=>handleMore(item.v)} style={[styles.verseOptions, { marginLeft: 10 }]} ref={ref2}><Ionic name="ellipsis-horizontal" color={'#BB5C04'} size={20} /></TouchableOpacity>
                 </View>
             </View>
             <Text style={styles.title}>{item.t}</Text>
@@ -75,6 +75,7 @@ export default function ScriptureReading({ navigation }) {
 
     const [refreshing, setRefreshing] = useState(false);
     const onRefresh = useCallback(() => {
+        setBible({book:book, chapter:chapter, verse:1});
         setRefreshing(true);
         setTimeout(() => {
             setRefreshing(false);

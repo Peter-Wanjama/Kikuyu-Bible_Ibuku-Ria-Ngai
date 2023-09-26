@@ -1,11 +1,9 @@
-import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { SafeAreaView, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from "react-native";
+import { SafeAreaView, StyleSheet, TouchableOpacity, View } from "react-native";
 import HomeScreen from "./HomeScreen";
 import ScriptureReading from "./sub/ScriptureReading";
 import SearchPage from "./sub/SearchPage";
 import Ionic from 'react-native-vector-icons/Ionicons';
-import BookSelection from "./BookSelection";
 import { useContext } from "react";
 import { BibleContext } from "../contexts/BibleContext";
 

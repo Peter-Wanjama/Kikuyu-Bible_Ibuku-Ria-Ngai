@@ -1,4 +1,4 @@
-import { StyleSheet, View, SafeAreaView, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, SafeAreaView } from 'react-native';
 import { useEffect } from 'react';
 import { useFonts } from 'expo-font';
 import { BibleProvider } from './contexts/BibleContext';
