@@ -9,6 +9,7 @@ import NotesScreen from './components/NotesScreen';
 import SavedScreen from './components/SavedScreen';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Octicon from 'react-native-vector-icons/Octicons';
 import Home from './components/Home';
 // import AppLoading from 'expo-app-loading';
 import * as SplashScreen from 'expo-splash-screen';
@@ -56,22 +57,22 @@ export default function App() {
                   },
                   tabBarIcon: ({ focused, size, colour }) => {
                     let iconName;
-                    colour = "#BB5C04";
+                    colour = focused?colors.brown:colors.coolgrey;
                     if (route.name === 'Home') {
-                      iconName = focused ? 'ios-home' : 'ios-home-outline';
+                      return <Octicon name={'home'} size={size} color={colour} />
                     } else if (route.name === 'Notes') {
-                      return <FontAwesome name={iconName = focused ? "sticky-note" : "sticky-note-o"} size={size} color={colour} />
+                      return <FontAwesome name={"sticky-note-o"} size={size} color={colour} />
                     } else if (route.name === 'Saved') {
-                      iconName = focused ? 'heart' : 'heart-outline';
+                      iconName = 'heart-outline';
                     } else if (route.name === 'Settings') {
-                      iconName = focused ? 'settings' : 'settings-outline';
+                      iconName = 'settings-outline';
                     }
                     return <Ionic name={iconName} size={size} color={colour} />
                   },
                   tabBarLabel:({focused,colour,size})=>{
                     let iconName;
                     colour = darkThemeOn?colors.grey:colors.dark;
-                    darkThemeOn?(focused?colour=colors.light:null):null;
+                    focused?colour=colors.brown:null;
                     return <Text style={{color:colour}}>{route.name}</Text>
                   }
                 })}>
