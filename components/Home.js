@@ -6,21 +6,26 @@ import SearchPage from "./sub/SearchPage";
 import Ionic from 'react-native-vector-icons/Ionicons';
 import { useContext } from "react";
 import { BibleContext } from "../contexts/BibleContext";
+import colors from "../config/colors";
 
 export default function Home() {
-    const { book, chapter, verse } = useContext(BibleContext);
+    const { book, chapter, verse,darkThemeOn } = useContext(BibleContext);
     const Stack = createNativeStackNavigator();
     return (
-        <Stack.Navigator>
+        <Stack.Navigator screenOptions={({ route }) => ({ statusBarStyle:darkThemeOn?'light':'dark',
+        headerStyle: { backgroundColor: darkThemeOn?colors.dark:colors.light }, 
+        headerTitleStyle:{color:darkThemeOn?colors.light:colors.dark},
+        headerTintColor:darkThemeOn?colors.light:colors.dark,
+        })}>
             <Stack.Screen options={({navigation})=>({ headerRight: (props) => (
                     <TouchableOpacity onPress={()=>navigation.navigate('Search')}>
-                        <Ionic name="search-sharp" size={22} style={{ paddingRight: 10 }} />
+                        <Ionic name="search-sharp" color={darkThemeOn?colors.light:colors.black} size={22} style={{ paddingRight: 10 }} />
                     </TouchableOpacity>
                 ), title: 'Kikuyu Bible' })} name="Home2" component={HomeScreen} />
             <Stack.Screen options={({navigation})=>({
                 headerRight: (props) => (
                     <TouchableOpacity onPress={()=>navigation.navigate('Search')}>
-                        <Ionic name="search-sharp" size={22} style={{ paddingRight: 10 }} />
+                        <Ionic name="search-sharp" color={darkThemeOn?colors.light:colors.black} size={22} style={{ paddingRight: 10 }} />
                     </TouchableOpacity>
                 ), title: book + " " + chapter
             })} name="ScriptureReading" component={ScriptureReading} />
@@ -32,20 +37,6 @@ export default function Home() {
 
 const styles = StyleSheet.create({
     wrapper: {
-
+        flex:1,
     },
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    paginationStyle: {
-        position: 'absolute',
-        bottom: 10,
-        right: 10
-    },
-    paginationText: {
-        color: 'white',
-        fontSize: 20
-    }
 });

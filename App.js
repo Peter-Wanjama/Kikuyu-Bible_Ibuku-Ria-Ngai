@@ -1,7 +1,7 @@
-import { StyleSheet, View, SafeAreaView } from 'react-native';
-import { useCallback, useEffect } from 'react';
+import { StyleSheet, View, SafeAreaView, Text } from 'react-native';
+import { useCallback, useContext, useEffect } from 'react';
 import { useFonts } from 'expo-font';
-import { BibleProvider } from './contexts/BibleContext';
+import { BibleContext, BibleProvider } from './contexts/BibleContext';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import SettingsScreen from './components/SettingsScreen';
@@ -13,6 +13,7 @@ import Home from './components/Home';
 // import AppLoading from 'expo-app-loading';
 import * as SplashScreen from 'expo-splash-screen';
 import { Platform } from 'react-native';
+import colors from './config/colors';
 
 const getFonts = {
   'BoldFont': require('./assets/fonts/Barlow-Bold.ttf'),
@@ -24,23 +25,35 @@ const getFonts = {
 };
 
 export default function App() {
+  
   const [fontsLoaded] = useFonts(getFonts);
   const Tab = createBottomTabNavigator();
-
-  if (!fontsLoaded) {
-    console.log("Fonts not loaded")
-    SplashScreen.preventAutoHideAsync();
-    return null;
-  } else {
-    console.log('App loaded.\n'+Platform.OS+' '+Platform.Version);
-    SplashScreen.hideAsync();
-    return (
-      <BibleProvider>
-        <SafeAreaView style={styles.wrapper}>
+  
+  function Nav() {
+    const {darkThemeOn} = useContext(BibleContext);
+    const styles = StyleSheet.create({
+    wrapper: {
+      flex: 1,
+      justifyContent: 'center',
+      backgroundColor:colors.dark,
+    },
+    container: {
+      backgroundColor:colors.dark,
+      flex: 1,
+    }
+  });
+    return(
+      <SafeAreaView style={styles.wrapper}>
           <View style={styles.container}>
             <NavigationContainer>
               <Tab.Navigator
                 screenOptions={({ route }) => ({
+                  tabBarActiveBackgroundColor:darkThemeOn?colors.dark:colors.light,
+                  tabBarInactiveBackgroundColor:darkThemeOn?colors.dark:colors.light,
+                  headerStyle: {backgroundColor: darkThemeOn?colors.dark:colors.light,},
+                  headerTitleStyle: {
+                    color:darkThemeOn?colors.light:colors.dark,
+                  },
                   tabBarIcon: ({ focused, size, colour }) => {
                     let iconName;
                     colour = "#BB5C04";
@@ -55,6 +68,12 @@ export default function App() {
                     }
                     return <Ionic name={iconName} size={size} color={colour} />
                   },
+                  tabBarLabel:({focused,colour,size})=>{
+                    let iconName;
+                    colour = darkThemeOn?colors.grey:colors.dark;
+                    darkThemeOn?(focused?colour=colors.light:null):null;
+                    return <Text style={{color:colour}}>{route.name}</Text>
+                  }
                 })}>
                 <Tab.Screen name="Home" options={{ headerShown: false }} component={Home} />
                 <Tab.Screen options={{ headerShown: false }} name="Notes" component={NotesScreen} />
@@ -64,17 +83,22 @@ export default function App() {
             </NavigationContainer>
           </View>
         </SafeAreaView>
+      );
+    };
+  if (!fontsLoaded) {
+    console.log("Fonts not loaded")
+    SplashScreen.preventAutoHideAsync();
+    return null;
+  } else {
+    console.log('App loaded.\n'+Platform.OS+' '+Platform.Version);
+    SplashScreen.hideAsync();
+
+    return (
+      <BibleProvider>
+        <Nav />
       </BibleProvider>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  container: {
-    flex: 1,
-  }
-});
+

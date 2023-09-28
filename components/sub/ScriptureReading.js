@@ -5,11 +5,48 @@ import { BibleContext } from "../../contexts/BibleContext";
 import Ionic from "react-native-vector-icons/Ionicons";
 import Swiper from "react-native-swiper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import colors from "../../config/colors";
 
 export default function ScriptureReading({ navigation }) {
+    const { book, chapter, verse, setBible, darkThemeOn } = useContext(BibleContext);
+    const styles = StyleSheet.create({
+        wrapper: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center'
+        },
+        container: {
+            flex: 1,
+            backgroundColor:darkThemeOn?colors.dark:colors.light,
+        },
+        item: {
+            //backgroundColor: '#f9c2ff',
+            marginVertical: 8,
+            marginHorizontal: 8,
+        },
+        title: {
+            fontSize: 20,
+            fontFamily: 'RegularFont',
+            color:darkThemeOn?colors.light:colors.black,
+        },
+        verseHeader: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+        },
+        verseHeaderText: {
+            color: '#BB5C04',
+            fontFamily: 'MediumFont',
+            fontSize: 16,
+        },
+        verseOptions: {
+        },
+        verseOptionsText: {
+            color: '#BB5C04',
+        }
+    });
     myRef = React.useRef(null);
     ref2 = React.useRef(null);
-    const { book, chapter, verse, setBible } = useContext(BibleContext);
+    
     const [showMoreTools, setShowMoreTools] = useState(false)
     const [currentItem, setCurrentItem] = useState(-1)
     const [favorites, setFavorites] = useState([]);
@@ -80,7 +117,7 @@ export default function ScriptureReading({ navigation }) {
                         <TouchableOpacity onPress={()=>shareVerse(b+" "+c+":"+item.v+"(Ibuku rĩa Ngai)\n"+item.t)}><Ionic style={{ marginRight: 8 }} name="share-social-outline" color={'#BB5C04'} size={20} /></TouchableOpacity>
                     </View> : null
                     }
-                    <TouchableOpacity onPress={()=>handleMore(item.v)} style={[styles.verseOptions, { marginLeft: 10 }]} ref={ref2}><Ionic name="ellipsis-horizontal" color={'#BB5C04'} size={50} /></TouchableOpacity>
+                    <TouchableOpacity onPress={()=>handleMore(item.v)} style={[styles.verseOptions, { marginLeft: 10 }]} ref={ref2}><Ionic name="ellipsis-horizontal" color={'#BB5C04'} size={20} /></TouchableOpacity>
                 </View>
             </View>
             <Text style={styles.title}>{item.t}</Text>
@@ -131,36 +168,3 @@ export default function ScriptureReading({ navigation }) {
         </SafeAreaView>
     );
 }
-const styles = StyleSheet.create({
-    wrapper: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    container: {
-        flex: 1,
-    },
-    item: {
-        //backgroundColor: '#f9c2ff',
-        marginVertical: 8,
-        marginHorizontal: 8,
-    },
-    title: {
-        fontSize: 20,
-        fontFamily: 'RegularFont',
-    },
-    verseHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    verseHeaderText: {
-        color: '#BB5C04',
-        fontFamily: 'MediumFont',
-        fontSize: 16,
-    },
-    verseOptions: {
-    },
-    verseOptionsText: {
-        color: '#BB5C04',
-    }
-});

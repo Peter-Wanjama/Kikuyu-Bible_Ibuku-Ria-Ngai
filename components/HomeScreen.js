@@ -6,6 +6,7 @@ import dailyVerses from "../assets/dailyVerses";
 import kikuyubibledb from "../assets/kikuyubibledb";
 import { BibleContext } from "../contexts/BibleContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import colors from "../config/colors";
 
 
 export default function HomeScreen({ navigation }) {
@@ -15,7 +16,7 @@ export default function HomeScreen({ navigation }) {
     // setDailyVerseIndex(Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000)-1);
     const dailyVerse = dailyVerses[Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000) - 1];
     // console.log(dailyVerse)
-    const { setBible } = useContext(BibleContext);
+    const { setBible,darkThemeOn } = useContext(BibleContext);
     const [data, setData] = useState([]);
     const [favorites, setFavorites] = useState([]);
     const bibleSheet = useRef(null);
@@ -118,6 +119,210 @@ export default function HomeScreen({ navigation }) {
         }
     }
     const id_dailyVerse = ('favorites-' + (dailyVerse.book + dailyVerse.chapter + dailyVerse.verse)).replace(/\s/g, '');
+    const styles1 = StyleSheet.create({
+        bookListItem: {
+            padding: 5,
+            margin: 2,
+            borderColor: 'rgba(211,211,211,1)',
+            borderRadius: 2,
+            borderWidth: 0.1,
+        },
+        bookListItemText: {
+            fontSize: 20,
+            fontFamily: 'RegularFont',
+        },
+        booksList: {
+            flex: 1,
+            //height: 100,
+            marginTop: 10,
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            //backgroundColor:'#f55',
+            justifyContent: 'space-evenly'
+        },
+    });
+    const styles2 = StyleSheet.create({
+        bookListItem: {
+            padding: 7,
+            margin: 5,
+            borderColor: 'rgba(211,211,211,1)',
+            //borderColor: '#f2a',
+            borderRadius: 1,
+            borderWidth: 0.1,
+            width: 45,
+            height: 40,
+            alignItems: 'center',
+        },
+        bookListItemText: {
+            fontSize: 20,
+            fontFamily: 'MediumFont',
+        },
+        booksList: {
+            flex: 1,
+            //height: 100
+            marginTop: 10,
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            //backgroundColor:'#f55',
+            justifyContent: 'flex-start'
+        }
+    });
+    
+    const styles = StyleSheet.create({
+        bibleSheetView: {
+            //flex:1,
+            height: 380,
+        },
+        divider: {
+            backgroundColor: '#d3d3d3',
+            width: 50,
+            height: 3,
+            borderRadius: 3,
+            alignSelf: 'center',
+            marginBottom: 10,
+            marginTop: 15,
+        },
+        dividerBottom: {
+            backgroundColor: '#d3d3d3',
+            width: '150%',
+            height: 1,
+            borderRadius: 3,
+            alignSelf: 'center',
+            marginBottom: 5,
+            marginTop: 5,
+        },
+        bibleSheetViewHeader: {
+            alignSelf: 'center',
+            padding: 5,
+        },
+        bibleSheetViewHeaderText: {
+            fontFamily: 'SemiBoldFont',
+            fontSize: 20,
+        },
+        booksList: {
+            flex: 1,
+            //height: 100,
+            marginTop: 10,
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            //backgroundColor:'#f55',
+            justifyContent: 'space-evenly'
+        },
+        bookListItem: {
+            padding: 5,
+            margin: 2,
+            borderColor: 'rgba(211,211,211,1)',
+            borderRadius: 2,
+            borderWidth: 0.1,
+        },
+        bookListItemText: {
+            fontSize: 20,
+            fontFamily: 'RegularFont',
+        },
+        container: {
+            flex: 1,
+            justifyContent: 'space-between',
+            backgroundColor:darkThemeOn?colors.dark:colors.light,
+        },
+        appBody: {
+            flex: 1,
+        },
+        appHeader: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            paddingRight: 15,
+            paddingLeft: 15,
+        },
+        appName: {
+            fontFamily: 'BoldFont',
+            //paddingRight: 10,
+        },
+        logo: {
+            alignSelf: 'center',
+            marginTop: 15,
+        },
+        dailyVerseBody: {
+            borderRadius: 5,
+            borderColor: '#eee',
+            borderWidth: 1,
+            margin: 10,
+            marginTop: 15,
+            flexDirection: 'column',
+        },
+        dailyVerseHeader: {
+            borderColor: '#eee',
+            borderWidth: 1,
+            padding: 5,
+            fontFamily: 'BoldFont',
+            textAlign: 'center',
+            fontSize: 22,
+            color:darkThemeOn?colors.light:colors.black,
+        },
+        dailyVerseRef: {
+            fontFamily: 'BoldFont',
+            fontSize: 18,
+            color:darkThemeOn?colors.light:colors.black,
+        },
+        dailyVerseText: {
+            padding: 10,
+            fontFamily: 'RegularFont',
+            fontSize: 22,
+            color:darkThemeOn?colors.light:colors.black,
+        },
+        dailyVerseFooter: {
+            borderColor: '#eee',
+            borderWidth: 1,
+            paddingLeft: 5,
+            fontFamily: 'RegularFont',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+        },
+        footerTools: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingTop: 5,
+            justifyContent: 'space-around'
+        },
+        footerToolsIcons: {
+            margin: 10,
+        },
+        bibleSection: {
+            borderRadius: 5,
+            borderColor: '#eee',
+            borderWidth: 1,
+            margin: 10,
+            flexDirection: 'column',
+            flexWrap: 'wrap',
+        },
+        startReading: {
+            fontFamily: 'BoldFont',
+            textAlign: 'center',
+            fontSize: 15,
+            padding: 5,
+            color:darkThemeOn?colors.light:colors.black,
+        },
+        testamentsSection: {
+            borderRadius: 5,
+            borderColor: '#eee',
+            borderWidth: 1,
+            paddingTop: 10,
+            paddingBottom: 10,
+            flexDirection: 'row',
+            justifyContent: 'space-evenly',
+        },
+        testaments: {
+            backgroundColor: '#BB5C04',
+            borderRadius: 5,
+            borderColor: '#eee',
+            borderWidth: 1,
+            color: '#fff',
+            padding: 16,
+            letterSpacing: 1,
+            fontFamily: 'RegularFont',
+            fontSize: 16,
+        }
+    });
     return (
         <View style={styles.container}>
             <View style={styles.appBody}>
@@ -205,204 +410,5 @@ export default function HomeScreen({ navigation }) {
             </View>
         </View>
     );
+    
 }
-
-const styles1 = StyleSheet.create({
-    bookListItem: {
-        padding: 5,
-        margin: 2,
-        borderColor: 'rgba(211,211,211,1)',
-        borderRadius: 2,
-        borderWidth: 0.1,
-    },
-    bookListItemText: {
-        fontSize: 20,
-        fontFamily: 'RegularFont',
-    },
-    booksList: {
-        flex: 1,
-        //height: 100,
-        marginTop: 10,
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        //backgroundColor:'#f55',
-        justifyContent: 'space-evenly'
-    },
-});
-const styles2 = StyleSheet.create({
-    bookListItem: {
-        padding: 7,
-        margin: 5,
-        borderColor: 'rgba(211,211,211,1)',
-        //borderColor: '#f2a',
-        borderRadius: 1,
-        borderWidth: 0.1,
-        width: 45,
-        height: 40,
-        alignItems: 'center',
-    },
-    bookListItemText: {
-        fontSize: 20,
-        fontFamily: 'MediumFont',
-    },
-    booksList: {
-        flex: 1,
-        //height: 100
-        marginTop: 10,
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        //backgroundColor:'#f55',
-        justifyContent: 'flex-start'
-    }
-});
-
-const styles = StyleSheet.create({
-    bibleSheetView: {
-        //flex:1,
-        height: 380,
-    },
-    divider: {
-        backgroundColor: '#d3d3d3',
-        width: 50,
-        height: 3,
-        borderRadius: 3,
-        alignSelf: 'center',
-        marginBottom: 10,
-        marginTop: 15,
-    },
-    dividerBottom: {
-        backgroundColor: '#d3d3d3',
-        width: '150%',
-        height: 1,
-        borderRadius: 3,
-        alignSelf: 'center',
-        marginBottom: 5,
-        marginTop: 5,
-    },
-    bibleSheetViewHeader: {
-        alignSelf: 'center',
-        padding: 5,
-    },
-    bibleSheetViewHeaderText: {
-        fontFamily: 'SemiBoldFont',
-        fontSize: 20,
-    },
-    booksList: {
-        flex: 1,
-        //height: 100,
-        marginTop: 10,
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        //backgroundColor:'#f55',
-        justifyContent: 'space-evenly'
-    },
-    bookListItem: {
-        padding: 5,
-        margin: 2,
-        borderColor: 'rgba(211,211,211,1)',
-        borderRadius: 2,
-        borderWidth: 0.1,
-    },
-    bookListItemText: {
-        fontSize: 20,
-        fontFamily: 'RegularFont',
-    },
-    container: {
-        flex: 1,
-        justifyContent: 'space-between',
-    },
-    appBody: {
-        flex: 1,
-    },
-    appHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingRight: 15,
-        paddingLeft: 15,
-    },
-    appName: {
-        fontFamily: 'BoldFont',
-        //paddingRight: 10,
-    },
-    logo: {
-        alignSelf: 'center',
-        marginTop: 15,
-    },
-    dailyVerseBody: {
-        borderRadius: 5,
-        borderColor: '#eee',
-        borderWidth: 1,
-        margin: 10,
-        marginTop: 15,
-        flexDirection: 'column',
-    },
-    dailyVerseHeader: {
-        borderColor: '#eee',
-        borderWidth: 1,
-        padding: 5,
-        fontFamily: 'BoldFont',
-        textAlign: 'center',
-        fontSize: 22,
-    },
-    dailyVerseRef: {
-        fontFamily: 'BoldFont',
-        fontSize: 18,
-    },
-    dailyVerseText: {
-        padding: 10,
-        fontFamily: 'RegularFont',
-        fontSize: 22,
-    },
-    dailyVerseFooter: {
-        borderColor: '#eee',
-        borderWidth: 1,
-        paddingLeft: 5,
-        fontFamily: 'RegularFont',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-    },
-    footerTools: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingTop: 5,
-        justifyContent: 'space-around'
-    },
-    footerToolsIcons: {
-        margin: 10,
-    },
-    bibleSection: {
-        borderRadius: 5,
-        borderColor: '#eee',
-        borderWidth: 1,
-        margin: 10,
-        flexDirection: 'column',
-        flexWrap: 'wrap',
-    },
-    startReading: {
-        fontFamily: 'BoldFont',
-        textAlign: 'center',
-        fontSize: 15,
-        padding: 5,
-    },
-    testamentsSection: {
-        borderRadius: 5,
-        borderColor: '#eee',
-        borderWidth: 1,
-        paddingTop: 10,
-        paddingBottom: 10,
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-    },
-    testaments: {
-        backgroundColor: '#BB5C04',
-        borderRadius: 5,
-        borderColor: '#eee',
-        borderWidth: 1,
-        color: '#fff',
-        padding: 16,
-        letterSpacing: 1,
-        fontFamily: 'RegularFont',
-        fontSize: 16,
-    }
-});

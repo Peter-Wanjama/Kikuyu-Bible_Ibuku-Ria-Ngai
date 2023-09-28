@@ -2,11 +2,54 @@ import { FlatList, RefreshControl, SafeAreaView, StyleSheet, Text, TextInput, To
 import Ionic from "react-native-vector-icons/Ionicons";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useCallback, useLayoutEffect, useState } from "react";
+import { useCallback, useContext, useLayoutEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
+import { BibleContext } from "../contexts/BibleContext";
+import colors from "../config/colors";
 
 function Notebook({ route, navigation }) {
+    const {darkThemeOn} = useContext(BibleContext);
+    const styles = StyleSheet.create({
+        wrapper: {
+            flex: 1,
+        },
+        row: {
+            flexDirection: 'row',
+        },
+        container: {
+            flex: 1,
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            padding: 1,
+            backgroundColor:darkThemeOn?colors.dark:colors.light,
+        },
+        speaker: {
+            fontSize: 15,
+            marginTop: 2,
+            marginLeft: 5,
+            color:darkThemeOn?colors.light:colors.dark,
+            fontFamily: 'RegularFont',
+            maxWidth: 100,
+        },
+        location: {
+            fontSize: 15,
+            marginTop: 2,
+            marginLeft: 5,
+            color:darkThemeOn?colors.light:colors.dark,
+            fontFamily: 'RegularFont',
+            maxWidth: 100,
+        },
+        date: {
+            fontSize: 15,
+            marginTop: 2,
+            marginLeft: 5,
+            color:darkThemeOn?colors.light:colors.dark,
+            fontFamily: 'RegularFont',
+            maxWidth: 100,
+        },
+        content:{ fontSize: 18, margin: 5, marginTop: 10, padding: 5, borderRadius: 1, borderWidth: 1, borderColor:colors.grey, height: '90%', color:darkThemeOn?colors.light:colors.dark, }
+    });
     var mynotes = new Object();
     var { heading, content, speaker, location } = route.params;
     const [x, setX] = useState({
@@ -82,17 +125,73 @@ function Notebook({ route, navigation }) {
     });
     return (
         <View style={[styles.container, { alignItems: 'left' }]}>
-            <TextInput style={{ fontSize: 18, padding: 5, fontFamily: 'SemiBoldFont' }} maxLength={25} defaultValue={x.heading} onChangeText={(text) => setX({ ...x, heading: text })} placeholder="Enter heading here" />
+            <TextInput style={{ fontSize: 18, padding: 5, fontFamily: 'SemiBoldFont',color:darkThemeOn?colors.coollight:colors.dark, }} cursorColor={colors.brown} placeholderTextColor={darkThemeOn?colors.coolgrey:colors.coolgrey} maxLength={25} defaultValue={x.heading} onChangeText={(text) => setX({ ...x, heading: text })} placeholder="Enter heading here" />
             <View style={[styles.row, { justifyContent: 'space-between', flexWrap: 'wrap' }]}>
-                <TextInput style={{ fontSize: 18, padding: 5, fontFamily: 'SemiBoldFont' }} maxLength={25} defaultValue={x.speaker} onChangeText={(text) => setX({ ...x, speaker: text })} placeholder="Enter speaker here" />
-                <TextInput style={{ fontSize: 18, padding: 5, fontFamily: 'SemiBoldFont' }} maxLength={25} defaultValue={x.location} onChangeText={(text) => setX({ ...x, location: text })} placeholder="Enter location here" />
+                <TextInput style={{ fontSize: 18, padding: 5, fontFamily: 'SemiBoldFont',color:darkThemeOn?colors.coollight:colors.dark, }} cursorColor={colors.brown} placeholderTextColor={darkThemeOn?colors.coolgrey:colors.coolgrey} maxLength={25} defaultValue={x.speaker} onChangeText={(text) => setX({ ...x, speaker: text })} placeholder="Enter speaker here" />
+                <TextInput style={{ fontSize: 18, padding: 5, fontFamily: 'SemiBoldFont',color:darkThemeOn?colors.coollight:colors.dark, }} cursorColor={colors.brown} placeholderTextColor={darkThemeOn?colors.coolgrey:colors.coolgrey} maxLength={25} defaultValue={x.location} onChangeText={(text) => setX({ ...x, location: text })} placeholder="Enter location here" />
             </View>
-            <TextInput style={{ fontSize: 18, margin: 5, marginTop: 10, padding: 5, borderRadius: 1, borderWidth: 1, height: '90%' }} onChangeText={(text) => setX({ ...x, content: text })} textAlignVertical="top"
-                defaultValue={x.content} maxLength={200} multiline={true} placeholder="Enter text here" />
+            <TextInput style={styles.content} onChangeText={(text) => setX({ ...x, content: text })} textAlignVertical="top"
+                defaultValue={x.content} maxLength={200} multiline={true} placeholder="Enter text here" cursorColor={colors.brown} placeholderTextColor={darkThemeOn?colors.coolgrey:colors.dark} />
         </View>
     );
 }
 function Notes({ navigation }) {
+    const {darkThemeOn} = useContext(BibleContext);
+    const styles = StyleSheet.create({
+        wrapper: {
+            flex: 1,
+        },
+        row: {
+            flexDirection: 'row',
+        },
+        container: {
+            flex: 1,
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            padding: 1,
+            backgroundColor:darkThemeOn?colors.dark:colors.light,
+        },
+        addNote: {
+            margin: 10,
+            width: '96%',
+            height: 25,
+            flexDirection: 'row',
+        },
+        addNoteText: {
+            fontSize: 22,
+            marginLeft: 10,
+            color:darkThemeOn?colors.light:colors.dark,
+        },
+        noteBody: {
+            flex:1,
+            marginBottom: 10,
+            borderWidth: 0.2,
+            borderRadius: 1,
+            shadowColor: '#1717171',
+            paddingHorizontal: 5,
+            paddingVertical: 10,
+            borderColor:colors.grey,
+            justifyContent: 'space-between',
+            width:340
+        },
+        noteHead: {
+            fontSize: 18,
+            fontFamily: 'SemiBoldFont',
+            marginBottom: 10,
+            color:darkThemeOn?colors.light:colors.dark,
+        },
+        noteContent: {
+            fontSize: 16,
+            fontFamily: 'RegularFont',
+            marginBottom: 20,
+            maxHeight: 42,
+            color:darkThemeOn?colors.light:colors.dark,
+        },
+        noteFooter: {
+            flexDirection: 'row',
+            justifyContent: 'space-around'
+        }
+    });
     const [arr, setArr] = useState([]);
     var myR = [];
     const fetchAllItems = async () => {
@@ -175,14 +274,19 @@ function Notes({ navigation }) {
     );
 }
 export default function NotesScreen() {
+    const {darkThemeOn} = useContext(BibleContext);
     const Stack = createNativeStackNavigator();
     return (
-        <SafeAreaView style={styles.wrapper}>
-            <Stack.Navigator>
+        <SafeAreaView style={{flex:1}}>
+            <Stack.Navigator screenOptions={({ route }) => ({ statusBarStyle:darkThemeOn?'light':'dark',
+             headerStyle: { backgroundColor: darkThemeOn?colors.dark:colors.light }, 
+             headerTitleStyle:{color:darkThemeOn?colors.light:colors.dark},
+             headerTintColor:darkThemeOn?colors.light:colors.dark,
+             })}>
                 <Stack.Screen options={({ navigation }) => ({
                     headerRight: (props) => (
                         <TouchableOpacity onPress={() => navigation.navigate('Search')}>
-                            <Ionic name="search-sharp" size={22} style={{ paddingRight: 10 }} />
+                            <Ionic name="search-sharp" color={darkThemeOn?colors.light:colors.black} size={22} style={{ paddingRight: 10 }} />
                         </TouchableOpacity>
                     ), title: 'Notes'
                 })} name='notes' component={Notes} />
@@ -193,78 +297,3 @@ export default function NotesScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    wrapper: {
-        flex: 1,
-    },
-    row: {
-        flexDirection: 'row',
-    },
-    container: {
-        flex: 1,
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        padding: 1,
-    },
-    addNote: {
-        margin: 10,
-        width: '96%',
-        height: 25,
-        flexDirection: 'row',
-    },
-    addNoteText: {
-        fontSize: 22,
-        marginLeft: 10,
-    },
-    noteBody: {
-        margin: 4,
-        marginBottom: 10,
-        borderWidth: 0.2,
-        borderRadius: 1,
-        shadowColor: '#1717171',
-        paddingLeft: 10,
-        paddingTop: 10,
-        paddingBottom: 10,
-        elevation: 1,
-        justifyContent: 'space-between'
-    },
-    noteHead: {
-        fontSize: 18,
-        fontFamily: 'SemiBoldFont',
-        marginBottom: 10,
-    },
-    noteContent: {
-        fontSize: 16,
-        fontFamily: 'RegularFont',
-        marginBottom: 20,
-        maxHeight: 42,
-    },
-    noteFooter: {
-        flexDirection: 'row',
-        justifyContent: 'space-around'
-    },
-    speaker: {
-        fontSize: 15,
-        marginTop: 2,
-        marginLeft: 5,
-        color: '#c2c2c2',
-        fontFamily: 'RegularFont',
-        maxWidth: 100,
-    },
-    location: {
-        fontSize: 15,
-        marginTop: 2,
-        marginLeft: 5,
-        color: '#c2c2c2',
-        fontFamily: 'RegularFont',
-        maxWidth: 100,
-    },
-    date: {
-        fontSize: 15,
-        marginTop: 2,
-        marginLeft: 5,
-        color: '#c2c2c2',
-        fontFamily: 'RegularFont',
-        maxWidth: 100,
-    },
-});

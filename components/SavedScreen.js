@@ -1,18 +1,61 @@
 import { FlatList, RefreshControl, SafeAreaView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import { useCallback, useLayoutEffect, useState } from "react";
+import { useCallback, useContext, useLayoutEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import kikuyubibledb from '../assets/kikuyubibledb';
+import colors from "../config/colors";
+import { BibleContext } from "../contexts/BibleContext";
+import { StatusBar } from "expo-status-bar";
 
 function Bookmarks() {
+    const styles = StyleSheet.create({
+       container: {
+            flex: 1,
+             backgroundColor:colors.dark,
+            alignItems: 'left'
+            // justifyContent: 'flex-end',
+            // alignItems: 'right',
+            // flexDirection: 'row'
+        }
+    });
     return (
-        <View style={[styles.container, { alignItems: 'left' }]}>
+        <View style={styles.container}>
             <Text>Bookmarks</Text>
         </View>
     );
 }
 function Favorites() {
+
+    const { darkThemeOn } = useContext(BibleContext);
+    const styles = StyleSheet.create({
+        container:{
+            flex:1,
+            backgroundColor:darkThemeOn?colors.dark:colors.light,
+        },
+        item: {
+            // backgroundColor: '#f9c2ff'
+            borderRadius: 1,
+            borderWidth: 0.4,
+            borderColor: '#d2d2d2',
+            marginVertical: 8,
+            marginHorizontal: 8,
+            padding: 5,
+        },
+        verseText: {
+            fontSize: 17,
+            fontFamily: 'OldRegularFont',
+            maxHeight: 36,
+            color:darkThemeOn?colors.light:colors.dark,
+        },
+        verseRef: {
+            marginTop: 3,
+            fontSize: 16,
+            fontFamily: 'OldBoldFont',
+            color:darkThemeOn?colors.coollight:colors.dark,
+        }
+    });
+    
     const [arr, setArr] = useState({id:'',book:'',chapter:'',verse:''});
     var myR = [];
     const BibleBooks = Object.keys(kikuyubibledb);
@@ -65,7 +108,7 @@ function Favorites() {
         setArr(myR)
     }, []);
     return (
-        <View>
+        <View style={styles.container}>
             <FlatList
                 data={arr}
                 renderItem={({ item }) => <Verse item={item} />}
@@ -76,12 +119,32 @@ function Favorites() {
     );
 }
 export default function NotesScreen() {
+    const { darkThemeOn } = useContext(BibleContext);
+
+    const styles = StyleSheet.create({
+        wrapper: {
+            flex: 1,
+        },
+        container: {
+            flex: 1,
+            backgroundColor:colors.danger,
+            // justifyContent: 'flex-end',
+            // alignItems: 'right',
+            // flexDirection: 'row'
+        },
+        nav: {
+            backgroundColor:colors.danger,
+        },
+        
+    });
     const TopTab = createMaterialTopTabNavigator();
     return (
         <SafeAreaView style={styles.wrapper}>
             <TopTab.Navigator style={styles.nav} screenOptions={{
                 tabBarIndicatorStyle: { backgroundColor: '#BB5C04' },
-                tabBarItemStyle: { width: 120, },
+                tabBarItemStyle: { width: 120,color:colors.danger },
+                tabBarActiveTintColor:darkThemeOn?colors.light:colors.dark,
+                tabBarStyle: { backgroundColor: darkThemeOn?colors.black:colors.light },
             }}>
                 <TopTab.Screen name='favorites' component={Favorites} />
                 <TopTab.Screen name='bookmarks' component={Bookmarks} />
@@ -90,35 +153,3 @@ export default function NotesScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    wrapper: {
-        flex: 1,
-    },
-    container: {
-        flex: 1,
-        // justifyContent: 'flex-end',
-        // alignItems: 'right',
-        // flexDirection: 'row'
-    },
-    nav: {
-    },
-    item: {
-        // backgroundColor: '#f9c2ff'
-        borderRadius: 1,
-        borderWidth: 0.4,
-        borderColor: '#d2d2d2',
-        marginVertical: 8,
-        marginHorizontal: 8,
-        padding: 5,
-    },
-    verseText: {
-        fontSize: 17,
-        fontFamily: 'OldRegularFont',
-        maxHeight: 36,
-    },
-    verseRef: {
-        marginTop: 3,
-        fontSize: 16,
-        fontFamily: 'OldBoldFont'
-    }
-});

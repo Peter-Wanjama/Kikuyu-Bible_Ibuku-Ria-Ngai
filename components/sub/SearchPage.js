@@ -4,6 +4,7 @@ import Ionic from "react-native-vector-icons/Ionicons";
 import { useContext, useEffect, useState } from "react";
 import kikuyubibledb from "../../assets/kikuyubibledb";
 import { BibleContext } from "../../contexts/BibleContext";
+import colors from "../../config/colors";
 
 function BibleSearch() {
     return (
@@ -18,8 +19,90 @@ function NotesSearch() {
     )
 }
 export default function SearchPage({navigation}) {
+    const {setBible,darkThemeOn}=useContext(BibleContext);
+    const styles = StyleSheet.create({
+        item: {
+            //backgroundColor: '#f9c2ff',
+            marginVertical: 2,
+            marginHorizontal: 2,
+        },
+        title: {
+            fontSize: 16,
+            fontFamily: 'RegularFont',
+            color:darkThemeOn?colors.light:colors.black,
+        },
+        verseHeader: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+        },
+        verseHeaderText: {
+            color: '#BB5C04',
+            fontFamily: 'MediumFont',
+            fontSize: 16,
+        },
+        searchResults: {
+            
+        },
+        list:{
+            paddingBottom:140
+        },
+        container: { 
+            flex: 1, 
+            backgroundColor:darkThemeOn?colors.dark:colors.light,
+            // justifyContent: 'center', 
+            // alignItems: 'center' 
+        },
+        specialCharacters: {
+            marginLeft: 10,
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+        },
+        spI: {
+            fontSize: 20,
+            fontFamily: 'OldBoldFont',color:darkThemeOn?colors.light:colors.black,
+        },
+        spU: {
+            fontSize: 20,
+            fontFamily: 'OldBoldFont',color:darkThemeOn?colors.light:colors.black,
+        },
+        searchBox: {
+            flex: 4,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            padding: 10,
+            height: 40,
+            marginLeft: 8,
+            marginVertical: 8,
+            borderWidth: 1,
+            borderRadius: 3,
+            borderColor: '#d3d3d3',
+        },
+        searchIcon: {
+            marginRight: -5,
+        },
+        searchInput: {
+            marginLeft: -5,
+            color:darkThemeOn?colors.light:colors.black,
+        },
+        searchResults: {
+            padding: 5,
+        },
+        searchScope: {
+            flexDirection: 'row',
+            marginLeft: 5,
+        },
+        OT: {
+            flexDirection: 'row',
+        },
+        NT: {
+            marginLeft: 10,
+            marginRight: 10,
+            flexDirection: 'row',
+        }
+    });
 
-    const {setBible}=useContext(BibleContext);
+    
     const [loading, setLoading] = useState(false);
     const [selectOT, setSelectOT] = useState(true);
     const [selectNT, setSelectNT] = useState(true);
@@ -70,24 +153,24 @@ export default function SearchPage({navigation}) {
         </View>
     );
     return (
-        <View styles={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <View style={styles.container}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}><View style={styles.specialCharacters}>
                 <TouchableOpacity onPress={() => setSearchText(searchText + 'ĩ')}><Text style={styles.spI}>ĩ</Text></TouchableOpacity>
                 <TouchableOpacity onPress={() => setSearchText(searchText + 'ũ')}><Text style={styles.spU}>ũ</Text></TouchableOpacity>
             </View>
                 <View style={styles.searchBox}>
-                    <TextInput style={styles.searchInput} value={searchText} onChangeText={(text) => setSearchText(text)} placeholder="Type text here to search" />
+                    <TextInput style={styles.searchInput} cursorColor={colors.brown} value={searchText} onChangeText={(text) => setSearchText(text)} placeholderTextColor={darkThemeOn?colors.coollight:colors.warmgrey} placeholder="Type text here to search" />
 
                     <TouchableOpacity onPress={handleSearch}><Ionic style={styles.searchIcon} name={'search-outline'} color={'#a5a5a5'} size={20} /></TouchableOpacity>
                 </View>
                 {loading ? <ActivityIndicator color={'#BB5C04'} /> : null}
                 <View style={styles.searchScope}>
-                    <View style={styles.OT}><Checkbox color={'#BB5C04'} disabled={false} value={selectOT} onValueChange={() => setSelectOT(!selectOT)} /><Text style={{ marginLeft: 5 }}>OT</Text></View>
-                    <View style={styles.NT}><Checkbox color={'#BB5C04'} disabled={false} value={selectNT} onValueChange={() => setSelectNT(!selectNT)} /><Text style={{ marginLeft: 5 }}>NT</Text></View>
+                    <View style={styles.OT}><Checkbox color={'#BB5C04'} disabled={false} value={selectOT} onValueChange={() => setSelectOT(!selectOT)} /><Text style={{ marginLeft: 5,color:darkThemeOn?colors.light:colors.black, }}>OT</Text></View>
+                    <View style={styles.NT}><Checkbox color={'#BB5C04'} disabled={false} value={selectNT} onValueChange={() => setSelectNT(!selectNT)} /><Text style={{ marginLeft: 5,color:darkThemeOn?colors.light:colors.black, }}>NT</Text></View>
                 </View>
             </View>
             <View style={styles.searchResults}>
-                {results >= 0 ? <Text>Search results: {results}</Text> : null}
+                {results >= 0 ? <Text style={{color:darkThemeOn?colors.light:colors.black,}}>Search results: {results}</Text> : null}
                 <FlatList
                     data={DATA}
                     renderItem={({ item }) => <Verse item={item} />}
@@ -97,79 +180,3 @@ export default function SearchPage({navigation}) {
         </View>
     );
 }
-const styles = StyleSheet.create({
-    item: {
-        //backgroundColor: '#f9c2ff',
-        marginVertical: 2,
-        marginHorizontal: 2,
-    },
-    title: {
-        fontSize: 16,
-        fontFamily: 'RegularFont',
-    },
-    verseHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    verseHeaderText: {
-        color: '#BB5C04',
-        fontFamily: 'MediumFont',
-        fontSize: 16,
-    },
-    searchResults: {
-        
-    },
-    list:{
-        marginBottom:140
-    },
-    container: {
-
-    },
-    specialCharacters: {
-        marginLeft: 10,
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    spI: {
-        fontSize: 20,
-        fontFamily: 'OldBoldFont',
-    },
-    spU: {
-        fontSize: 20,
-        fontFamily: 'OldBoldFont',
-    },
-    searchBox: {
-        flex: 4,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        padding: 10,
-        height: 40,
-        marginLeft: 8,
-        marginVertical: 8,
-        borderWidth: 1,
-        borderRadius: 3,
-        borderColor: '#d3d3d3',
-    },
-    searchIcon: {
-        marginRight: -5,
-    },
-    searchInput: {
-        marginLeft: -5,
-    },
-    searchResults: {
-        padding: 5,
-    },
-    searchScope: {
-        flexDirection: 'row',
-        marginLeft: 5,
-    },
-    OT: {
-        flexDirection: 'row',
-    },
-    NT: {
-        marginLeft: 10,
-        marginRight: 10,
-        flexDirection: 'row',
-    }
-});
